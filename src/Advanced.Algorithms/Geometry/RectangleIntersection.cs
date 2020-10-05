@@ -11,7 +11,7 @@ namespace Advanced.Algorithms.Geometry
         /// Returns the rectangle formed by the intersection if do intersect.
         /// Otherwise default value of Rectangle struct.
         /// </summary>
-        public static Rectangle FindIntersection(Rectangle a, Rectangle b)
+        public static Rectangle? FindIntersection(Rectangle a, Rectangle b)
         {
             //check for intersection
             if (!DoIntersect(a, b))
@@ -34,11 +34,7 @@ namespace Advanced.Algorithms.Geometry
             );
 
 
-            return new Rectangle()
-            {
-                LeftTop = leftTopCorner,
-                RightBottom = rightBottomCorner
-            };
+            return new Rectangle(leftTopCorner, rightBottomCorner);
         }
 
         public static bool DoIntersect(Rectangle a, Rectangle b)

@@ -5,7 +5,7 @@ namespace Advanced.Algorithms.Geometry
     /// <summary>
     /// Polygon object.
     /// </summary>
-    public class Polygon
+    public struct Polygon
     {
         /// <summary>
         ///     Create a polygon with given edges lines.
@@ -32,6 +32,6 @@ namespace Advanced.Algorithms.Geometry
 
         }
 
-        public List<Line> Edges { get; set; }
+        public List<Line> Edges { get; }
     }
 }

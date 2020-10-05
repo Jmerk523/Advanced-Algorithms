@@ -6,12 +6,10 @@ namespace Advanced.Algorithms.Geometry
     /// <summary>
     /// Rectangle object.
     /// </summary>
-    public class Rectangle
+    public struct Rectangle
     {
-        public Point LeftTop { get; set; }
-        public Point RightBottom { get; set; }
-
-        public Rectangle() { }
+        public Point LeftTop { get; }
+        public Point RightBottom { get; }
 
         public Rectangle(Point leftTop, Point rightBottom)
         {

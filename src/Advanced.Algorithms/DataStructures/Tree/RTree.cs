@@ -140,8 +140,8 @@ namespace Advanced.Algorithms.DataStructures
 
                 if (leftEnlargementArea == rightEnlargementArea)
                 {
-                    var leftArea = e1.MBRectangle.Area();
-                    var rightArea = e2.MBRectangle.Area();
+                    var leftArea = e1.MBRectangle.Rect.Area();
+                    var rightArea = e2.MBRectangle.Rect.Area();
 
                     if (leftArea == rightArea)
                     {
@@ -278,16 +278,16 @@ namespace Advanced.Algorithms.DataStructures
             {
                 foreach (var node in current.Children.Take(current.KeyCount))
                 {
-                    if (RectangleIntersection.DoIntersect(node.MBRectangle, searchRectangle))
+                    if (RectangleIntersection.DoIntersect(node.MBRectangle.Rect, searchRectangle))
                     {
-                        result.Add(node.MBRectangle.Polygon);
+                        result.Add(node.MBRectangle.Polygon.Value);
                     }
                 }
             }
 
             foreach (var node in current.Children.Take(current.KeyCount))
             {
-                if (RectangleIntersection.DoIntersect(node.MBRectangle, searchRectangle))
+                if (RectangleIntersection.DoIntersect(node.MBRectangle.Rect, searchRectangle))
                 {
                     rangeSearch(node, searchRectangle, result);
                 }
@@ -403,7 +403,7 @@ namespace Advanced.Algorithms.DataStructures
 
         private void shrinkMBR(RTreeNode current)
         {
-            current.MBRectangle = new MBRectangle(current.Children[0].MBRectangle);
+            current.MBRectangle = new MBRectangle(current.Children[0].MBRectangle.Rect);
             foreach (var node in current.Children.Skip(1).Take(current.KeyCount - 1))
             {
                 current.MBRectangle.Merge(node.MBRectangle);
@@ -510,7 +510,7 @@ namespace Advanced.Algorithms.DataStructures
 
             if (MBRectangle == null)
             {
-                MBRectangle = new MBRectangle(child.MBRectangle);
+                MBRectangle = new MBRectangle(child.MBRectangle.Rect);
             }
             else
             {
@@ -531,7 +531,7 @@ namespace Advanced.Algorithms.DataStructures
             return Children[Children.Take(KeyCount)
                               .Select((node, index) => new { node, index })
                               .OrderBy(x => x.node.MBRectangle.GetEnlargementArea(newPolygon))
-                              .ThenBy(x => x.node.MBRectangle.Area())
+                              .ThenBy(x => x.node.MBRectangle.Rect.Area())
                               .First().index];
         }
 
@@ -541,24 +541,26 @@ namespace Advanced.Algorithms.DataStructures
     /// <summary>
     ///     Minimum bounded rectangle (MBR).
     /// </summary>
-    internal class MBRectangle : Rectangle
+    internal class MBRectangle
     {
+        public Rectangle Rect;
+
         internal MBRectangle(Point leftTopCorner, Point rightBottomCorner)
         {
-            LeftTop = leftTopCorner;
-            RightBottom = rightBottomCorner;
+            Rect = new Rectangle(leftTopCorner, rightBottomCorner);
         }
 
         internal MBRectangle(Rectangle rectangle)
         {
-            LeftTop = new Point(rectangle.LeftTop.X, rectangle.LeftTop.Y);
-            RightBottom = new Point(rectangle.RightBottom.X, rectangle.RightBottom.Y);
+            Rect = new Rectangle(
+                new Point(rectangle.LeftTop.X, rectangle.LeftTop.Y),
+                new Point(rectangle.RightBottom.X, rectangle.RightBottom.Y));
         }
 
         /// <summary>
         ///     The actual polygon if this MBR is a leaf.
         /// </summary>
-        internal Polygon Polygon { get; set; }
+        internal Polygon? Polygon { get; set; }
 
         /// <summary>
         ///     Returns the required enlargement area to fit the given rectangle inside this minimum bounded rectangle.
@@ -566,7 +568,7 @@ namespace Advanced.Algorithms.DataStructures
         /// <param name="polygonToFit">The rectangle to fit inside current MBR.</param>
         internal double GetEnlargementArea(MBRectangle rectangleToFit)
         {
-            return Math.Abs(getMergedRectangle(rectangleToFit).Area() - Area());
+            return Math.Abs(getMergedRectangle(rectangleToFit).Rect.Area() - Rect.Area());
         }
 
         /// <summary>
@@ -576,20 +578,19 @@ namespace Advanced.Algorithms.DataStructures
         {
             var merged = getMergedRectangle(rectangleToMerge);
 
-            LeftTop = merged.LeftTop;
-            RightBottom = merged.RightBottom;
+            Rect = new Rectangle(merged.Rect.LeftTop, merged.Rect.RightBottom);
         }
 
         /// <summary>
         ///     Merge the current rectangle with given rectangle. 
         /// </summary>
-        private Rectangle getMergedRectangle(MBRectangle rectangleToMerge)
+        private MBRectangle getMergedRectangle(MBRectangle rectangleToMerge)
         {
-            var leftTopCorner = new Point(LeftTop.X > rectangleToMerge.LeftTop.X ? rectangleToMerge.LeftTop.X : LeftTop.X,
-              LeftTop.Y < rectangleToMerge.LeftTop.Y ? rectangleToMerge.LeftTop.Y : LeftTop.Y);
+            var leftTopCorner = new Point(Rect.LeftTop.X > rectangleToMerge.Rect.LeftTop.X ? rectangleToMerge.Rect.LeftTop.X : Rect.LeftTop.X,
+              Rect.LeftTop.Y < rectangleToMerge.Rect.LeftTop.Y ? rectangleToMerge.Rect.LeftTop.Y : Rect.LeftTop.Y);
 
-            var rightBottomCorner = new Point(RightBottom.X < rectangleToMerge.RightBottom.X ? rectangleToMerge.RightBottom.X : RightBottom.X,
-                RightBottom.Y > rectangleToMerge.RightBottom.Y ? rectangleToMerge.RightBottom.Y : RightBottom.Y);
+            var rightBottomCorner = new Point(Rect.RightBottom.X < rectangleToMerge.Rect.RightBottom.X ? rectangleToMerge.Rect.RightBottom.X : Rect.RightBottom.X,
+                Rect.RightBottom.Y > rectangleToMerge.Rect.RightBottom.Y ? rectangleToMerge.Rect.RightBottom.Y : Rect.RightBottom.Y);
 
             return new MBRectangle(leftTopCorner, rightBottomCorner);
         }

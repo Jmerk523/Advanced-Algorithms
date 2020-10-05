@@ -92,7 +92,7 @@ namespace Advanced.Algorithms.Geometry
                         }
 
                         //special case
-                        if (currentEvent.Segment.IsVertical || currentEvent.Segment.IsHorizontal)
+                        if (currentEvent.Segment.Value.IsVertical || currentEvent.Segment.Value.IsHorizontal)
                         {
                             verticalAndHorizontalLines.Add(currentEvent);
 
@@ -127,7 +127,7 @@ namespace Advanced.Algorithms.Geometry
                         currentEvent = rightLeftEventLookUp[currentEvent];
 
                         //special case
-                        if (currentEvent.Segment.IsVertical || currentEvent.Segment.IsHorizontal)
+                        if (currentEvent.Segment.Value.IsVertical || currentEvent.Segment.Value.IsHorizontal)
                         {
                             verticalAndHorizontalLines.Remove(currentEvent);
                             break;
@@ -148,13 +148,13 @@ namespace Advanced.Algorithms.Geometry
 
                     case EventType.Intersection:
 
-                        var intersectionLines = intersectionEvents[currentEvent as Point];
+                        var intersectionLines = intersectionEvents[currentEvent.Point];
 
                         foreach (var lines in intersectionLines)
                         {
                             //special case
-                            if (lines.Item1.Segment.IsHorizontal || lines.Item1.Segment.IsVertical
-                                || lines.Item2.Segment.IsHorizontal || lines.Item2.Segment.IsVertical)
+                            if (lines.Item1.Segment.Value.IsHorizontal || lines.Item1.Segment.Value.IsVertical
+                                || lines.Item2.Segment.Value.IsHorizontal || lines.Item2.Segment.Value.IsVertical)
                             {
                                 continue;
                             }
@@ -182,7 +182,7 @@ namespace Advanced.Algorithms.Geometry
             }
 
             return intersectionEvents.ToDictionary(x => x.Key,
-                                                   x => x.Value.SelectMany(y => new[] { y.Item1.Segment, y.Item2.Segment })
+                                                   x => x.Value.SelectMany(y => new[] { y.Item1.Segment.Value, y.Item2.Segment.Value })
                                                        .Distinct().ToList());
         }
 
@@ -209,14 +209,14 @@ namespace Advanced.Algorithms.Geometry
             currentlyTrackedLines.NodeLookUp[node2.Value] = node2;
         }
 
-        private void enqueueIntersectionEvent(Event currentEvent, Point intersection)
+        private void enqueueIntersectionEvent(Event currentEvent, Point? intersection)
         {
             if (intersection == null)
             {
                 return;
             }
 
-            var intersectionEvent = new Event(intersection, pointComparer, EventType.Intersection, null, this);
+            var intersectionEvent = new Event(intersection.Value, pointComparer, EventType.Intersection, null, this);
 
             if (intersectionEvent.X > SweepLine.Left.X
                 || (intersectionEvent.X == SweepLine.Left.X
@@ -231,7 +231,7 @@ namespace Advanced.Algorithms.Geometry
 
         }
 
-        private Point findIntersection(Event a, Event b)
+        private Point? findIntersection(Event a, Event b)
         {
             if (a == null || b == null
                 || a.Type == EventType.Intersection
@@ -240,20 +240,24 @@ namespace Advanced.Algorithms.Geometry
                 return null;
             }
 
-            return a.Segment.Intersection(b.Segment, Tolerance);
+            if (b.Segment == null)
+            {
+                return null;
+            }
+            return a.Segment?.Intersection(b.Segment.Value, Tolerance);
         }
 
-        private void recordIntersection(Event line1, Event line2, Point intersection)
+        private void recordIntersection(Event line1, Event line2, Point? intersection)
         {
             if (intersection == null)
             {
                 return;
             }
 
-            var existing = intersectionEvents.ContainsKey(intersection) ?
-                intersectionEvents[intersection] : new HashSet<Tuple<Event, Event>>();
+            var existing = intersectionEvents.ContainsKey(intersection.Value) ?
+                intersectionEvents[intersection.Value] : new HashSet<Tuple<Event, Event>>();
 
-            if (line1.Segment.Slope.CompareTo(line2.Segment.Slope) > 0)
+            if (line1.Segment.Value.Slope.CompareTo(line2.Segment.Value.Slope) > 0)
             {
                 existing.Add(new Tuple<Event, Event>(line1, line2));
             }
@@ -262,7 +266,7 @@ namespace Advanced.Algorithms.Geometry
                 existing.Add(new Tuple<Event, Event>(line2, line1));
             }
 
-            intersectionEvents[intersection] = existing;
+            intersectionEvents[intersection.Value] = existing;
         }
     }
 
@@ -277,7 +281,7 @@ namespace Advanced.Algorithms.Geometry
     /// <summary>
     ///     A custom object representing start/end/intersection point.
     /// </summary>
-    internal class Event : Point, IComparable
+    internal class Event : IPoint, IComparable
     {
         private readonly double tolerance;
         private readonly PointComparer pointComparer;
@@ -285,24 +289,28 @@ namespace Advanced.Algorithms.Geometry
         internal EventType Type;
 
         //The full line only if not an intersection event
-        internal Line Segment;
+        internal Line? Segment;
 
         internal BentleyOttmann Algorithm;
 
         internal Line LastSweepLine;
         internal Point LastIntersection;
+        internal Point Point;
 
         internal Event(Point eventPoint, PointComparer pointComparer, EventType eventType,
-            Line lineSegment, BentleyOttmann algorithm)
-            : base(eventPoint.X, eventPoint.Y)
+            Line? lineSegment, BentleyOttmann algorithm)
         {
             tolerance = algorithm.Tolerance;
             this.pointComparer = pointComparer;
 
+            Point = eventPoint;
             Type = eventType;
             Segment = lineSegment;
             Algorithm = algorithm;
         }
+
+        public double X => Point.X;
+        public double Y => Point.Y;
 
         public int CompareTo(object that)
         {
@@ -313,13 +321,18 @@ namespace Advanced.Algorithms.Geometry
 
             var thatEvent = that as Event;
 
-            var line1 = Segment;
-            var line2 = thatEvent.Segment;
+            if (!Segment.HasValue || !thatEvent.Segment.HasValue)
+            {
+                throw new InvalidOperationException();
+            }
+
+            var line1 = Segment.Value;
+            var line2 = thatEvent.Segment.Value;
 
             Point intersectionA;
             if (Type == EventType.Intersection)
             {
-                intersectionA = this as Point;
+                intersectionA = Point;
             }
             else
             {
@@ -329,7 +342,7 @@ namespace Advanced.Algorithms.Geometry
                 }
                 else
                 {
-                    intersectionA = LineIntersection.FindIntersection(line1, Algorithm.SweepLine, tolerance);
+                    intersectionA = LineIntersection.FindIntersection(line1, Algorithm.SweepLine, tolerance) ?? default;
                     LastSweepLine = Algorithm.SweepLine;
                     LastIntersection = intersectionA;
                 }
@@ -338,7 +351,7 @@ namespace Advanced.Algorithms.Geometry
             Point intersectionB;
             if (Type == EventType.Intersection)
             {
-                intersectionB = thatEvent as Point;
+                intersectionB = thatEvent.Point;
             }
             else
             {
@@ -348,7 +361,7 @@ namespace Advanced.Algorithms.Geometry
                 }
                 else
                 {
-                    intersectionB = LineIntersection.FindIntersection(line2, thatEvent.Algorithm.SweepLine, tolerance);
+                    intersectionB = LineIntersection.FindIntersection(line2, thatEvent.Algorithm.SweepLine, tolerance) ?? default;
                     thatEvent.LastSweepLine = thatEvent.Algorithm.SweepLine;
                     thatEvent.LastIntersection = intersectionB;
                 }
@@ -405,7 +418,7 @@ namespace Advanced.Algorithms.Geometry
 
             if (Type == EventType.Intersection && thatEvent.Type == EventType.Intersection)
             {
-                return pointComparer.Equals(this as Point, thatEvent);
+                return pointComparer.Equals(this, thatEvent);
             }
 
             return false;

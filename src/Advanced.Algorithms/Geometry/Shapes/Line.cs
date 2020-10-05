@@ -1,27 +1,22 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Advanced.Algorithms.Geometry
 {
     /// <summary>
     /// Line object.
     /// </summary>
-    public class Line
+    public struct Line : IEquatable<Line>
     {
-        public Point Left { get; private set; }
-        public Point Right { get; private set; }
+        public Point Left { get; }
+        public Point Right { get; }
 
         public bool IsVertical => Left.X == Right.X;
         public bool IsHorizontal => Left.Y == Right.Y;
 
-        public double Slope => slope.Value;
-
-        private Line()
-        {
-            slope = new Lazy<double>(() => calcSlope());
-        }
+        public double Slope { get; }
 
         internal Line(Point start, Point end, double tolerance)
-            : this()
         {
             if (start.X < end.X)
             {
@@ -47,12 +42,14 @@ namespace Advanced.Algorithms.Geometry
                     Right = start;
                 }
             }
+
+            Slope = default;
+            Slope = calcSlope();
         }
 
         public Line(Point start, Point end, int precision = 5)
         : this(start, end, Math.Round(Math.Pow(0.1, precision), precision)) { }
 
-        private readonly Lazy<double> slope;
         private double calcSlope()
         {
             Point left = Left, right = Right;
@@ -66,9 +63,35 @@ namespace Advanced.Algorithms.Geometry
             return ((right.Y - left.Y) / (right.X - left.X));
         }
 
-        public Line Clone()
+        public override bool Equals(object obj)
         {
-            return new Line(Left.Clone(), Right.Clone());
+            return obj is Line line && Equals(line);
+        }
+
+        public bool Equals(Line other)
+        {
+            return EqualityComparer<Point>.Default.Equals(Left, other.Left) &&
+                   EqualityComparer<Point>.Default.Equals(Right, other.Right) &&
+                   Slope == other.Slope;
+        }
+
+        public override int GetHashCode()
+        {
+            int hashCode = 450345861;
+            hashCode = hashCode * -1521134295 + Left.GetHashCode();
+            hashCode = hashCode * -1521134295 + Right.GetHashCode();
+            hashCode = hashCode * -1521134295 + Slope.GetHashCode();
+            return hashCode;
+        }
+
+        public static bool operator ==(Line left, Line right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(Line left, Line right)
+        {
+            return !(left == right);
         }
     }
 }

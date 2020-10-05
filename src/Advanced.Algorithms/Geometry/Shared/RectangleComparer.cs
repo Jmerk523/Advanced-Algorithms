@@ -9,17 +9,6 @@ namespace Advanced.Algorithms.Geometry
     {
         public bool Equals(Rectangle x, Rectangle y)
         {
-            if (x == null && y == null)
-            {
-                return true;
-            }
-
-            // Check for null values 
-            if (x == null || y == null)
-            {
-                return false;
-            }
-
             return x.LeftTop.X == y.LeftTop.X
                 && x.LeftTop.Y == y.LeftTop.Y
                 && x.RightBottom.X == y.RightBottom.X

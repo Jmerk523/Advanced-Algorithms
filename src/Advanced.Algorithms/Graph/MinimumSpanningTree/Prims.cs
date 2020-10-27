@@ -8,7 +8,7 @@ namespace Advanced.Algorithms.Graph
     /// <summary>
     /// A Prims algorithm implementation.
     /// </summary>
-    public class Prims<T, W> where W : IComparable
+    public class Prims<T, W> where W : IComparable<W>
     {
         /// <summary>
         /// Find Minimum Spanning Tree of given undirected graph.

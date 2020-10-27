@@ -6,7 +6,7 @@ namespace Advanced.Algorithms.Sorting
     /// <summary>
     /// A bubble sort implementation.
     /// </summary>
-    public class BubbleSort<T> where T : IComparable
+    public class BubbleSort<T> where T : IComparable<T>
     {
         /// <summary>
         /// Time complexity: O(n^2).

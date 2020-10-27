@@ -8,7 +8,7 @@ namespace Advanced.Algorithms.DataStructures
     /// <summary>
     /// A fibornacci minMax heap implementation.
     /// </summary>
-    public class FibonacciHeap<T> : IEnumerable<T> where T : IComparable
+    public class FibonacciHeap<T> : IEnumerable<T> where T : IComparable<T>
     {
         private readonly bool isMaxHeap;
         private readonly IComparer<T> comparer;

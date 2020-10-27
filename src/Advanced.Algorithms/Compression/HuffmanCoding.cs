@@ -95,7 +95,7 @@ namespace Advanced.Algorithms.Compression
             return result;
         }
 
-        private class FrequencyWrap : IComparable
+        private class FrequencyWrap : IComparable<FrequencyWrap>
         {
             public T Item { get; }
             public int Frequency { get; }
@@ -112,9 +112,9 @@ namespace Advanced.Algorithms.Compression
                 Frequency = frequency;
             }
 
-            public int CompareTo(object obj)
+            public int CompareTo(FrequencyWrap other)
             {
-                return Frequency.CompareTo(((FrequencyWrap)obj).Frequency);
+                return Frequency.CompareTo(other.Frequency);
             }
         }
 

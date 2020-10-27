@@ -7,7 +7,7 @@ namespace Advanced.Algorithms.Graph
     /// <summary>
     /// A Bellman Ford algorithm implementation.
     /// </summary>
-    public class BellmanFordShortestPath<T, W> where W : IComparable
+    public class BellmanFordShortestPath<T, W> where W : IComparable<W>
     {
         readonly IShortestPathOperators<W> @operator;
         public BellmanFordShortestPath(IShortestPathOperators<W> @operator)

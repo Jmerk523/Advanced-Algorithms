@@ -9,7 +9,7 @@ namespace Advanced.Algorithms.Graph
     /// <summary>
     /// A* algorithm implementation using Fibonacci Heap.
     /// </summary>
-    public class AStarShortestPath<T, W> where W : IComparable
+    public class AStarShortestPath<T, W> where W : IComparable<W>
     {
         readonly IShortestPathOperators<W> @operator;
         readonly IAStarHeuristic<T, W> heuristic;
@@ -183,7 +183,7 @@ namespace Advanced.Algorithms.Graph
     /// <summary>
     /// Search heuristic used by A* search algorithm.
     /// </summary>
-    public interface IAStarHeuristic<T, W> where W : IComparable
+    public interface IAStarHeuristic<T, W> where W : IComparable<W>
     {
         /// <summary>
         /// Return the distance to target for given sourcevertex as computed by the hueristic used for A* search.
@@ -192,7 +192,7 @@ namespace Advanced.Algorithms.Graph
     }
 
     //Node for our Fibonacci heap
-    internal class AStarWrap<T, W> : IComparable where W : IComparable
+    internal class AStarWrap<T, W> : IComparable<AStarWrap<T, W>> where W : IComparable<W>
     {
         private IAStarHeuristic<T, W> heuristic;
         private T destinationVertex;
@@ -206,15 +206,15 @@ namespace Advanced.Algorithms.Graph
         internal W Distance { get; set; }
 
         //compare distance to target using the heuristic provided
-        public int CompareTo(object obj)
+        public int CompareTo(AStarWrap<T, W> other)
         {
-            if (this == obj)
+            if (this == other)
             {
                 return 0;
             }
 
             var result1 = heuristic.HueristicDistanceToTarget(Vertex, destinationVertex);
-            var result2 = heuristic.HueristicDistanceToTarget((obj as AStarWrap<T, W>).Vertex, destinationVertex);
+            var result2 = heuristic.HueristicDistanceToTarget(other.Vertex, destinationVertex);
 
             return result1.CompareTo(result2);
         }

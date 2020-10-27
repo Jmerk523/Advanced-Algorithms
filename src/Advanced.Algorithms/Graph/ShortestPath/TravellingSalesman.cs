@@ -10,7 +10,7 @@ namespace Advanced.Algorithms.Graph
     /// Uses dynamic programming for a
     /// psuedo-polynomial time runTime complexity for this NP hard problem.
     /// </summary>
-    public class TravellingSalesman<T, W> where W : IComparable
+    public class TravellingSalesman<T, W> where W : IComparable<W>
     {
         IShortestPathOperators<W> @operator;
 

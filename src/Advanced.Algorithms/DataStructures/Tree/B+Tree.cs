@@ -7,7 +7,7 @@ namespace Advanced.Algorithms.DataStructures
     /// <summary>
     /// A B+ tree implementation.
     /// </summary>
-    public class BpTree<T> : IEnumerable<T> where T : IComparable
+    public class BpTree<T> : IEnumerable<T> where T : IComparable<T>
     {
         private readonly int maxKeysPerNode;
         private readonly int minKeysPerNode;
@@ -958,7 +958,7 @@ namespace Advanced.Algorithms.DataStructures
         }
     }
 
-    internal class BpTreeNode<T> : BNode<T> where T : IComparable
+    internal class BpTreeNode<T> : BNode<T> where T : IComparable<T>
     {
         internal BpTreeNode<T> Parent { get; set; }
         internal BpTreeNode<T>[] Children { get; set; }
@@ -1002,7 +1002,7 @@ namespace Advanced.Algorithms.DataStructures
 
     }
 
-    internal class BpTreeEnumerator<T> : IEnumerator<T> where T : IComparable
+    internal class BpTreeEnumerator<T> : IEnumerator<T> where T : IComparable<T>
     {
         private readonly bool asc;
 

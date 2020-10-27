@@ -10,7 +10,7 @@ namespace Advanced.Algorithms.Graph
     /// <summary>
     /// A Johnson's shortest path algorithm implementation.
     /// </summary>
-    public class JohnsonsShortestPath<T, W> where W : IComparable
+    public class JohnsonsShortestPath<T, W> where W : IComparable<W>
     {
         readonly IJohnsonsShortestPathOperators<T, W> @operator;
 
@@ -129,7 +129,7 @@ namespace Advanced.Algorithms.Graph
     /// A concrete implementation of this interface is required by Johnson's algorithm.
     /// </summary>
     public interface IJohnsonsShortestPathOperators<T, W>
-    : IShortestPathOperators<W> where W : IComparable
+    : IShortestPathOperators<W> where W : IComparable<W>
     {
         /// <summary>
         /// Substract a from b.

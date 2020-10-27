@@ -8,7 +8,7 @@ namespace Advanced.Algorithms.DataStructures
     /// <summary>
     /// A B-tree implementation.
     /// </summary>
-    public class BTree<T> : IEnumerable<T> where T : IComparable
+    public class BTree<T> : IEnumerable<T> where T : IComparable<T>
     {
         private readonly int maxKeysPerNode;
         private readonly int minKeysPerNode;
@@ -758,7 +758,7 @@ namespace Advanced.Algorithms.DataStructures
     /// abstract node shared by both B and B+ tree nodes
     /// so that we can use this for common tests across B and B+ tree
     /// </summary>
-    internal abstract class BNode<T> where T : IComparable
+    internal abstract class BNode<T> where T : IComparable<T>
     {
         /// <summary>
         /// Array Index of this node in parent's Children array
@@ -783,7 +783,7 @@ namespace Advanced.Algorithms.DataStructures
         }
     }
 
-    internal class BTreeNode<T> : BNode<T> where T : IComparable
+    internal class BTreeNode<T> : BNode<T> where T : IComparable<T>
     {
 
         internal BTreeNode<T> Parent { get; set; }
@@ -817,7 +817,7 @@ namespace Advanced.Algorithms.DataStructures
         }
     }
 
-    internal class BTreeEnumerator<T> : IEnumerator<T> where T : IComparable
+    internal class BTreeEnumerator<T> : IEnumerator<T> where T : IComparable<T>
     {
         private readonly BTreeNode<T> root;
         private Stack<BTreeNode<T>> progress;

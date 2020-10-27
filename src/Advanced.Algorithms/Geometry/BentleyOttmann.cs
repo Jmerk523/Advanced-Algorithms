@@ -281,7 +281,7 @@ namespace Advanced.Algorithms.Geometry
     /// <summary>
     ///     A custom object representing start/end/intersection point.
     /// </summary>
-    internal class Event : IPoint, IComparable
+    internal class Event : IPoint, IComparable<Event>
     {
         private readonly double tolerance;
         private readonly PointComparer pointComparer;
@@ -312,14 +312,12 @@ namespace Advanced.Algorithms.Geometry
         public double X => Point.X;
         public double Y => Point.Y;
 
-        public int CompareTo(object that)
+        public int CompareTo(Event thatEvent)
         {
-            if (Equals(that))
+            if (Equals(thatEvent))
             {
                 return 0;
             }
-
-            var thatEvent = that as Event;
 
             if (!Segment.HasValue || !thatEvent.Segment.HasValue)
             {
@@ -399,6 +397,11 @@ namespace Advanced.Algorithms.Geometry
             //since we don't let duplicate lines with input HashSet of lines.
             //see line equals override in Line class.
             return result;
+        }
+
+        public int CompareTo(object that)
+        {
+            return CompareTo((Event)that);
         }
 
         public override bool Equals(object that)

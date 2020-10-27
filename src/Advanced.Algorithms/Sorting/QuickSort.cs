@@ -6,7 +6,7 @@ namespace Advanced.Algorithms.Sorting
     /// <summary>
     /// A quick sort implementation.
     /// </summary>
-    public class QuickSort<T> where T : IComparable
+    public class QuickSort<T> where T : IComparable<T>
     {
         /// <summary>
         /// Time complexity: O(n^2)

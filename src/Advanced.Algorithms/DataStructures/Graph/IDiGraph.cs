@@ -36,12 +36,12 @@ namespace Advanced.Algorithms.DataStructures.Graph
 
     public interface IDiEdge<T>
     {
-        W Weight<W>() where W : IComparable;
+        W Weight<W>() where W : IComparable<W>;
         T TargetVertexKey { get; }
         IDiGraphVertex<T> TargetVertex { get; }
     }
 
-    internal class DiEdge<T, C> : IDiEdge<T> where C : IComparable
+    internal class DiEdge<T, C> : IDiEdge<T> where C : IComparable<C>
     {
         private object weight;
 
@@ -55,7 +55,7 @@ namespace Advanced.Algorithms.DataStructures.Graph
 
         public IDiGraphVertex<T> TargetVertex { get; private set; }
 
-        public W Weight<W>() where W : IComparable
+        public W Weight<W>() where W : IComparable<W>
         {
             return (W)weight;
         }

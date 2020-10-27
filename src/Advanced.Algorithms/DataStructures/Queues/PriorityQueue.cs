@@ -7,7 +7,7 @@ namespace Advanced.Algorithms.DataStructures
     /// <summary>
     /// A priority queue implementation using heap
     /// </summary>
-    public class PriorityQueue<T> : IEnumerable<T> where T : IComparable
+    public class PriorityQueue<T> : IEnumerable<T> where T : IComparable<T>
     {
         private readonly BHeap<T> heap;
         public PriorityQueue(SortDirection sortDirection = SortDirection.Ascending)

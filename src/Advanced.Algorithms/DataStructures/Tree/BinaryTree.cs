@@ -9,7 +9,7 @@ namespace Advanced.Algorithms.DataStructures
     /// <summary>
     /// A binary tree implementation using pointers.
     /// </summary>
-    public class BinaryTree<T> : IEnumerable<T> where T : IComparable
+    public class BinaryTree<T> : IEnumerable<T> where T : IComparable<T>
     {
         private BinaryTreeNode<T> root { get; set; }
 
@@ -227,7 +227,7 @@ namespace Advanced.Algorithms.DataStructures
 
     }
 
-    internal class BinaryTreeNode<T> : IComparable where T : IComparable
+    internal class BinaryTreeNode<T> : IComparable<BinaryTreeNode<T>> where T : IComparable<T>
     {
         internal T Value { get; set; }
 
@@ -244,13 +244,13 @@ namespace Advanced.Algorithms.DataStructures
             Value = value;
         }
 
-        public int CompareTo(object obj)
+        public int CompareTo(BinaryTreeNode<T> other)
         {
-            return Value.CompareTo(obj as BinaryTreeNode<T>);
+            return Value.CompareTo(other.Value);
         }
     }
 
-    internal class BinaryTreeEnumerator<T> : IEnumerator<T> where T : IComparable
+    internal class BinaryTreeEnumerator<T> : IEnumerator<T> where T : IComparable<T>
     {
         private readonly BinaryTreeNode<T> root;
         private Stack<BinaryTreeNode<T>> progress;

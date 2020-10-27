@@ -8,7 +8,7 @@ namespace Advanced.Algorithms.DataStructures
     /// <summary>
     /// A binomial minMax heap implementation.
     /// </summary>
-    public class BinomialHeap<T> : IEnumerable<T> where T : IComparable
+    public class BinomialHeap<T> : IEnumerable<T> where T : IComparable<T>
     {
         private readonly bool isMaxHeap;
         private readonly IComparer<T> comparer;

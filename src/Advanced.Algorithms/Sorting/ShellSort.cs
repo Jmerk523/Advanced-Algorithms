@@ -6,7 +6,7 @@ namespace Advanced.Algorithms.Sorting
     /// <summary>
     /// A shell sort implementation.
     /// </summary>
-    public class ShellSort<T> where T : IComparable
+    public class ShellSort<T> where T : IComparable<T>
     {
         public static T[] Sort(T[] array, SortDirection sortDirection = SortDirection.Ascending)
         {

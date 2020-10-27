@@ -6,7 +6,7 @@ namespace Advanced.Algorithms.Sorting
     /// <summary>
     /// A selection sort implementation.
     /// </summary>
-    public class SelectionSort<T> where T : IComparable
+    public class SelectionSort<T> where T : IComparable<T>
     {
         /// <summary>
         /// Time complexity: O(n^2).

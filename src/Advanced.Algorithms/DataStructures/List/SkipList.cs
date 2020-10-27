@@ -8,7 +8,7 @@ namespace Advanced.Algorithms.DataStructures
     /// A skip list implementation with IEnumerable support.
     /// </summary>
     /// <typeparam name="T">The data type of thi skip list.</typeparam>
-    public class SkipList<T> : IEnumerable<T> where T : IComparable
+    public class SkipList<T> : IEnumerable<T> where T : IComparable<T>
     {
         private readonly Random coinFlipper = new Random();
 
@@ -203,7 +203,7 @@ namespace Advanced.Algorithms.DataStructures
         }
     }
 
-    internal class SkipListNode<T> where T : IComparable
+    internal class SkipListNode<T> where T : IComparable<T>
     {
         internal SkipListNode<T> Prev { get; set; }
         internal SkipListNode<T>[] Next { get; set; }
@@ -211,7 +211,7 @@ namespace Advanced.Algorithms.DataStructures
         internal T value { get; set; }
     }
 
-    internal class SkipListEnumerator<T> : IEnumerator<T> where T : IComparable
+    internal class SkipListEnumerator<T> : IEnumerator<T> where T : IComparable<T>
     {
         private SkipListNode<T> head;
 

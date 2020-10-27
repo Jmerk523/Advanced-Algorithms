@@ -11,7 +11,7 @@ namespace Advanced.Algorithms.DataStructures.Foundation
     /// </summary>
     /// <typeparam name="K">The key datatype.</typeparam>
     /// <typeparam name="V">The value datatype.</typeparam>
-    public class OrderedDictionary<K, V> : IEnumerable<KeyValuePair<K, V>> where K : IComparable
+    public class OrderedDictionary<K, V> : IEnumerable<KeyValuePair<K, V>> where K : IComparable<K>
     {
         //use red-black tree as our balanced BST since it gives good performance for both deletion/insertion
         private readonly RedBlackTree<OrderedKeyValuePair<K, V>> binarySearchTree;
@@ -203,8 +203,8 @@ namespace Advanced.Algorithms.DataStructures.Foundation
         }
     }
 
-    internal struct OrderedKeyValuePair<K, V> : IComparable
-                                 where K : IComparable
+    internal struct OrderedKeyValuePair<K, V> : IComparable<OrderedKeyValuePair<K, V>>
+        where K : IComparable<K>
     {
         internal K Key { get; }
         internal V Value { get; set; }
@@ -224,7 +224,7 @@ namespace Advanced.Algorithms.DataStructures.Foundation
         {
             if (obj is OrderedKeyValuePair<K, V> itemToComare)
             {
-                return Key.CompareTo(itemToComare.Key);
+                return CompareTo(itemToComare);
             }
 
             throw new ArgumentException("Compare object is nu");
@@ -240,9 +240,13 @@ namespace Advanced.Algorithms.DataStructures.Foundation
             return Key.GetHashCode();
         }
 
+        public int CompareTo(OrderedKeyValuePair<K, V> other)
+        {
+            return Key.CompareTo(other.Key);
+        }
     }
 
-    internal class SortedDictionaryEnumerator<K, V> : IEnumerator<KeyValuePair<K, V>> where K : IComparable
+    internal class SortedDictionaryEnumerator<K, V> : IEnumerator<KeyValuePair<K, V>> where K : IComparable<K>
     {
         private bool asc;
 

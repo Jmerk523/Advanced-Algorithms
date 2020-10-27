@@ -6,7 +6,7 @@ namespace Advanced.Algorithms.Sorting
     /// <summary>
     /// An insertion sort implementation.
     /// </summary>
-    public class InsertionSort<T> where T : IComparable
+    public class InsertionSort<T> where T : IComparable<T>
     {
         /// <summary>
         /// Time complexity: O(n^2).

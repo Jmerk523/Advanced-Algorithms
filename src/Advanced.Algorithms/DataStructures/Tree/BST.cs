@@ -8,7 +8,7 @@ namespace Advanced.Algorithms.DataStructures
     /// <summary>
     /// A binary search tree implementation.
     /// </summary>
-    public class BST<T> : IEnumerable<T> where T : IComparable
+    public class BST<T> : IEnumerable<T> where T : IComparable<T>
     {
         internal BSTNode<T> Root { get; set; }
 
@@ -455,7 +455,7 @@ namespace Advanced.Algorithms.DataStructures
         }
     }
 
-    internal class BSTNode<T> : BSTNodeBase<T> where T : IComparable
+    internal class BSTNode<T> : BSTNodeBase<T> where T : IComparable<T>
     {
         internal new BSTNode<T> Parent
         {

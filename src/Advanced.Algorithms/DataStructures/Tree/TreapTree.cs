@@ -8,7 +8,7 @@ namespace Advanced.Algorithms.DataStructures
     /// <summary>
     /// A treap tree implementation.
     /// </summary>
-    public class TreapTree<T> : IEnumerable<T> where T : IComparable
+    public class TreapTree<T> : IEnumerable<T> where T : IComparable<T>
     {
         private Random rndGenerator = new Random();
         internal TreapTreeNode<T> Root { get; set; }
@@ -545,7 +545,7 @@ namespace Advanced.Algorithms.DataStructures
         }
     }
 
-    internal class TreapTreeNode<T> : BSTNodeBase<T> where T : IComparable
+    internal class TreapTreeNode<T> : BSTNodeBase<T> where T : IComparable<T>
     {
         internal new TreapTreeNode<T> Parent
         {

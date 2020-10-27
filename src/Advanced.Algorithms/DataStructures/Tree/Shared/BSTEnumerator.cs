@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace Advanced.Algorithms.DataStructures
 {
     //  implement IEnumerator.
-    internal class BSTEnumerator<T> : IEnumerator<T> where T : IComparable
+    internal class BSTEnumerator<T> : IEnumerator<T> where T : IComparable<T>
     {
         private readonly bool asc;
 

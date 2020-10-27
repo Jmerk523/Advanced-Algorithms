@@ -8,7 +8,7 @@ namespace Advanced.Algorithms.DataStructures
     /// <summary>
     /// An AVL tree implementation.
     /// </summary>
-    public class AVLTree<T> : IEnumerable<T> where T : IComparable
+    public class AVLTree<T> : IEnumerable<T> where T : IComparable<T>
     {
         private readonly Dictionary<T, BSTNodeBase<T>> nodeLookUp;
 
@@ -705,7 +705,7 @@ namespace Advanced.Algorithms.DataStructures
         }
     }
 
-    internal class AVLTreeNode<T> : BSTNodeBase<T> where T : IComparable
+    internal class AVLTreeNode<T> : BSTNodeBase<T> where T : IComparable<T>
     {
         internal new AVLTreeNode<T> Parent
         {

@@ -10,7 +10,7 @@ namespace Advanced.Algorithms.Graph
     /// A Kruskal's alogorithm implementation
     /// using merge sort and disjoint set.
     /// </summary>
-    public class Kruskals<T, W> where W : IComparable
+    public class Kruskals<T, W> where W : IComparable<W>
     {
         /// <summary>
         /// Find Minimum Spanning Tree of given weighted graph.
@@ -117,7 +117,7 @@ namespace Advanced.Algorithms.Graph
     /// <summary>
     /// Minimum spanning tree edge object.
     /// </summary>
-    public class MSTEdge<T, W> : IComparable where W : IComparable
+    public class MSTEdge<T, W> : IComparable<MSTEdge<T, W>> where W : IComparable<W>
     {
         public T Source { get; }
         public T Destination { get; }
@@ -129,9 +129,10 @@ namespace Advanced.Algorithms.Graph
             Destination = dest;
             Weight = weight;
         }
-        public int CompareTo(object obj)
+
+        public int CompareTo(MSTEdge<T, W> other)
         {
-            return Weight.CompareTo(((MSTEdge<T, W>)obj).Weight);
+            return Weight.CompareTo(other.Weight);
         }
     }
 }

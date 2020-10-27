@@ -9,7 +9,7 @@ namespace Advanced.Algorithms.DataStructures.Foundation
     /// This may be better than regular HashSet implementation which can give o(K) in worst case (but O(1) amortized when collisions K is avoided).
     /// </summary>
     /// <typeparam name="T">The value datatype.</typeparam>
-    public class OrderedHashSet<T> : IEnumerable<T> where T : IComparable
+    public class OrderedHashSet<T> : IEnumerable<T> where T : IComparable<T>
     {
         //use red-black tree as our balanced BST since it gives good performance for both deletion/insertion
         private readonly RedBlackTree<T> binarySearchTree;

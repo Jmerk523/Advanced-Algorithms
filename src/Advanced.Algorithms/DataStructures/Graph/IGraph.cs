@@ -32,12 +32,12 @@ namespace Advanced.Algorithms.DataStructures.Graph
 
     public interface IEdge<T>
     {
-        W Weight<W>() where W : IComparable;
+        W Weight<W>() where W : IComparable<W>;
         T TargetVertexKey { get; }
         IGraphVertex<T> TargetVertex { get; }
     }
 
-    internal class Edge<T, C> : IEdge<T> where C : IComparable
+    internal class Edge<T, C> : IEdge<T> where C : IComparable<C>
     {
         private object weight;
 
@@ -51,7 +51,7 @@ namespace Advanced.Algorithms.DataStructures.Graph
 
         public IGraphVertex<T> TargetVertex { get; private set; }
 
-        public W Weight<W>() where W : IComparable
+        public W Weight<W>() where W : IComparable<W>
         {
             return (W)weight;
         }

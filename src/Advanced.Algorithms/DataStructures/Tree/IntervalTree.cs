@@ -9,7 +9,7 @@ namespace Advanced.Algorithms.DataStructures
     /// <summary>
     /// A multi-dimensional interval tree implementation.
     /// </summary>
-    public class IntervalTree<T> : IEnumerable<Tuple<T[], T[]>> where T : IComparable
+    public class IntervalTree<T> : IEnumerable<Tuple<T[], T[]>> where T : IComparable<T>
     {
         private readonly int dimensions;
         private readonly OneDimentionalIntervalTree<T> tree;
@@ -274,7 +274,7 @@ namespace Advanced.Algorithms.DataStructures
     /// <summary>
     /// An interval tree implementation in one dimension using augmentation tree method.
     /// </summary>
-    internal class OneDimentionalIntervalTree<T> where T : IComparable
+    internal class OneDimentionalIntervalTree<T> where T : IComparable<T>
     {
         //use a height balanced binary search tree
         private readonly RedBlackTree<OneDimentionalInterval<T>> redBlackTree
@@ -573,7 +573,7 @@ namespace Advanced.Algorithms.DataStructures
     /// <summary>
     /// One dimensional interval.
     /// </summary>
-    internal class OneDimentionalInterval<T> : IComparable where T : IComparable
+    internal class OneDimentionalInterval<T> : IComparable<OneDimentionalInterval<T>> where T : IComparable<T>
     {
         /// <summary>
         /// Start of this interval range.
@@ -603,7 +603,12 @@ namespace Advanced.Algorithms.DataStructures
 
         public int CompareTo(object obj)
         {
-            return Start.CompareTo(((OneDimentionalInterval<T>)obj).Start);
+            return CompareTo((OneDimentionalInterval<T>)obj);
+        }
+
+        public int CompareTo(OneDimentionalInterval<T> other)
+        {
+            return Start.CompareTo(other.Start);
         }
 
         public OneDimentionalInterval(T start, T end, Lazy<T> defaultValue)
@@ -617,7 +622,7 @@ namespace Advanced.Algorithms.DataStructures
     /// <summary>
     /// Compares two intervals.
     /// </summary>
-    internal class IntervalComparer<T> : IEqualityComparer<Tuple<T[], T[]>> where T : IComparable
+    internal class IntervalComparer<T> : IEqualityComparer<Tuple<T[], T[]>> where T : IComparable<T>
     {
         public bool Equals(Tuple<T[], T[]> x, Tuple<T[], T[]> y)
         {

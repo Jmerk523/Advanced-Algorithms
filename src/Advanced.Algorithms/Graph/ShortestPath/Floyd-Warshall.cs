@@ -7,7 +7,7 @@ namespace Advanced.Algorithms.Graph
     /// <summary>
     /// A floyd-warshall shortest path algorithm implementation.
     /// </summary>
-    public class FloydWarshallShortestPath<T, W> where W : IComparable
+    public class FloydWarshallShortestPath<T, W> where W : IComparable<W>
     {
         readonly IShortestPathOperators<W> @operator;
         public FloydWarshallShortestPath(IShortestPathOperators<W> @operator)
@@ -151,7 +151,7 @@ namespace Advanced.Algorithms.Graph
     /// <summary>
     /// All pairs shortest path algorithm result object.
     /// </summary>
-    public class AllPairShortestPathResult<T, W> where W : IComparable
+    public class AllPairShortestPathResult<T, W> where W : IComparable<W>
     {
         public T Source { get; }
         public T Destination { get; }

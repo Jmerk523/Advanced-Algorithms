@@ -9,7 +9,7 @@ namespace Advanced.Algorithms.DataStructures
     /// <summary>
     /// A red black tree implementation.
     /// </summary>
-    public class RedBlackTree<T> : IEnumerable<T> where T : IComparable
+    public class RedBlackTree<T> : IEnumerable<T> where T : IComparable<T>
     {
         internal RedBlackTreeNode<T> Root { get; set; }
 
@@ -890,7 +890,7 @@ namespace Advanced.Algorithms.DataStructures
     /// <summary>
     /// Red black tree node
     /// </summary>
-    internal class RedBlackTreeNode<T> : BSTNodeBase<T> where T : IComparable
+    public class RedBlackTreeNode<T> : BSTNodeBase<T> where T : IComparable<T>
     {
         internal new RedBlackTreeNode<T> Parent
         {

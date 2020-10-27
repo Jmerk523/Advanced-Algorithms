@@ -10,7 +10,7 @@ namespace Advanced.Algorithms.Graph
     /// <summary>
     /// A Push-Relabel algorithm implementation.
     /// </summary>
-    public class PushRelabelMaxFlow<T, W> where W : IComparable
+    public class PushRelabelMaxFlow<T, W> where W : IComparable<W>
     {
         readonly IFlowOperators<W> @operator;
         public PushRelabelMaxFlow(IFlowOperators<W> @operator)

@@ -9,7 +9,7 @@ namespace Advanced.Algorithms.Graph
     /// <summary>
     /// A dijikstra algorithm implementation using Fibonacci Heap.
     /// </summary>
-    public class DijikstraShortestPath<T, W> where W : IComparable
+    public class DijikstraShortestPath<T, W> where W : IComparable<W>
     {
         readonly IShortestPathOperators<W> @operator;
         public DijikstraShortestPath(IShortestPathOperators<W> @operator)
@@ -169,7 +169,7 @@ namespace Advanced.Algorithms.Graph
     /// <summary>
     /// Generic operators interface required by shorted path algorithms.
     /// </summary>
-    public interface IShortestPathOperators<W> where W : IComparable
+    public interface IShortestPathOperators<W> where W : IComparable<W>
     {
         W DefaultValue { get; }
         W MaxValue { get; }
@@ -179,7 +179,7 @@ namespace Advanced.Algorithms.Graph
     /// <summary>
     /// Shortest path result object.
     /// </summary>
-    public class ShortestPathResult<T, W> where W : IComparable
+    public class ShortestPathResult<T, W> where W : IComparable<W>
     {
         public ShortestPathResult(List<T> path, W length)
         {
@@ -193,14 +193,14 @@ namespace Advanced.Algorithms.Graph
     /// <summary>
     /// For fibornacci heap node.
     /// </summary>
-    internal class MinHeapWrap<T, W> : IComparable where W : IComparable
+    internal class MinHeapWrap<T, W> : IComparable<MinHeapWrap<T, W>> where W : IComparable<W>
     {
         internal T Vertex { get; set; }
         internal W Distance { get; set; }
 
-        public int CompareTo(object obj)
+        public int CompareTo(MinHeapWrap<T, W> other)
         {
-            return Distance.CompareTo((obj as MinHeapWrap<T, W>).Distance);
+            return Distance.CompareTo(other.Distance);
         }
     }
 }

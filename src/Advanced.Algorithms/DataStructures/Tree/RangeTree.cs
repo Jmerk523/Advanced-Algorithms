@@ -8,7 +8,7 @@ namespace Advanced.Algorithms.DataStructures
     /// <summary>
     /// A multi-dimentional range tree implementation.
     /// </summary>
-    public class RangeTree<T> : IEnumerable<T[]> where T : IComparable
+    public class RangeTree<T> : IEnumerable<T[]> where T : IComparable<T>
     {
         private readonly int dimensions;
 
@@ -186,7 +186,7 @@ namespace Advanced.Algorithms.DataStructures
     /// One dimensional range tree
     /// by nesting node with r-b tree for next dimension.
     /// </summary>
-    internal class OneDimentionalRangeTree<T> where T : IComparable
+    internal class OneDimentionalRangeTree<T> where T : IComparable<T>
     {
         internal RedBlackTree<RangeTreeNode<T>> tree
             = new RedBlackTree<RangeTreeNode<T>>();
@@ -318,7 +318,7 @@ namespace Advanced.Algorithms.DataStructures
     /// <summary>
     /// Range tree node.
     /// </summary>
-    internal class RangeTreeNode<T> : IComparable where T : IComparable
+    internal class RangeTreeNode<T> : IComparable<RangeTreeNode<T>> where T : IComparable<T>
     {
         internal T Value => Values[0];
 
@@ -332,10 +332,9 @@ namespace Advanced.Algorithms.DataStructures
             tree = new OneDimentionalRangeTree<T>();
         }
 
-        public int CompareTo(object obj)
+        public int CompareTo(RangeTreeNode<T> other)
         {
-            return Value.CompareTo(((RangeTreeNode<T>)obj).Value);
+            return Value.CompareTo(other.Value);
         }
-
     }
 }

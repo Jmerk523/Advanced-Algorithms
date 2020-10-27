@@ -10,7 +10,7 @@ namespace Advanced.Algorithms.Graph
     /// An Edmond Karp max flow implementation on weighted directed graph using 
     /// adjacency list representation of graph and residual graph.
     /// </summary>
-    public class EdmondKarpMaxFlow<T, W> where W : IComparable
+    public class EdmondKarpMaxFlow<T, W> where W : IComparable<W>
     {
         readonly IFlowOperators<W> @operator;
         public EdmondKarpMaxFlow(IFlowOperators<W> @operator)

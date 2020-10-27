@@ -8,7 +8,7 @@ namespace Advanced.Algorithms.DataStructures
     /// <summary>
     /// A splay tree implementation.
     /// </summary>
-    public class SplayTree<T> : IEnumerable<T> where T : IComparable
+    public class SplayTree<T> : IEnumerable<T> where T : IComparable<T>
     {
         internal SplayTreeNode<T> Root { get; set; }
         public int Count => Root == null ? 0 : Root.Count;
@@ -550,7 +550,7 @@ namespace Advanced.Algorithms.DataStructures
         }
     }
 
-    internal class SplayTreeNode<T> : BSTNodeBase<T> where T : IComparable
+    internal class SplayTreeNode<T> : BSTNodeBase<T> where T : IComparable<T>
     {
         internal new SplayTreeNode<T> Parent
         {

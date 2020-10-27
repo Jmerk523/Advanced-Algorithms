@@ -8,7 +8,7 @@ namespace Advanced.Algorithms.DataStructures
     /// <summary>
     /// A tree implementation.
     /// </summary>
-    public class Tree<T> : IEnumerable<T> where T : IComparable
+    public class Tree<T> : IEnumerable<T> where T : IComparable<T>
     {
         private TreeNode<T> root { get; set; }
 
@@ -212,7 +212,7 @@ namespace Advanced.Algorithms.DataStructures
 
     }
 
-    internal class TreeNode<T> : IComparable where T : IComparable
+    internal class TreeNode<T> : IComparable<TreeNode<T>> where T : IComparable<T>
     {
         internal T Value { get; set; }
 
@@ -229,13 +229,13 @@ namespace Advanced.Algorithms.DataStructures
             Children = new SinglyLinkedList<TreeNode<T>>();
         }
 
-        public int CompareTo(object obj)
+        public int CompareTo(TreeNode<T> other)
         {
-            return Value.CompareTo(obj as TreeNode<T>);
+            return Value.CompareTo(other.Value);
         }
     }
 
-    internal class TreeEnumerator<T> : IEnumerator<T> where T : IComparable
+    internal class TreeEnumerator<T> : IEnumerator<T> where T : IComparable<T>
     {
         private readonly TreeNode<T> root;
         private Stack<TreeNode<T>> progress;

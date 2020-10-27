@@ -9,7 +9,7 @@ namespace Advanced.Algorithms.DataStructures.Graph.AdjacencyMatrix
     /// A weighted graph implementation using dynamically growing/shrinking adjacency matrix array.
     /// IEnumerable enumerates all vertices.
     /// </summary>
-    public class WeightedGraph<T, TW> : IGraph<T>, IEnumerable<T> where TW : IComparable
+    public class WeightedGraph<T, TW> : IGraph<T>, IEnumerable<T> where TW : IComparable<TW>
     {
         private TW[,] matrix;
 
@@ -370,7 +370,7 @@ namespace Advanced.Algorithms.DataStructures.Graph.AdjacencyMatrix
             return graph;
         }
 
-        private class WeightedGraphVertex<T, TW> : IGraphVertex<T> where TW : IComparable
+        private class WeightedGraphVertex<T, TW> : IGraphVertex<T> where TW : IComparable<TW>
         {
             WeightedGraph<T, TW> graph;
             private int vertexIndex;

@@ -8,7 +8,7 @@ namespace Advanced.Algorithms.DataStructures
     /// <summary>
     /// A multiDimensional k-d tree implementation (Unbalanced).
     /// </summary>
-    public class KDTree<T> : IEnumerable<T[]> where T : IComparable
+    public class KDTree<T> : IEnumerable<T[]> where T : IComparable<T>
     {
         private int dimensions;
         private KDTreeNode<T> root;
@@ -468,7 +468,7 @@ namespace Advanced.Algorithms.DataStructures
     /// <summary>
     /// k-d tree node.
     /// </summary>
-    internal class KDTreeNode<T> where T : IComparable
+    internal class KDTreeNode<T> where T : IComparable<T>
     {
         internal T[] Points { get; set; }
 
@@ -490,7 +490,7 @@ namespace Advanced.Algorithms.DataStructures
     /// A concrete implementation of this interface is required
     /// when calling NearestNeigbour() for k-d tree.
     /// </summary>
-    public interface IDistanceCalculator<T> where T : IComparable
+    public interface IDistanceCalculator<T> where T : IComparable<T>
     {
         /// <summary>
         /// Compare the distance between point A to point
@@ -507,7 +507,7 @@ namespace Advanced.Algorithms.DataStructures
         int Compare(T a, T b, T[] start, T[] end);
     }
 
-    internal class KDTreeEnumerator<T> : IEnumerator<T[]> where T : IComparable
+    internal class KDTreeEnumerator<T> : IEnumerator<T[]> where T : IComparable<T>
     {
         private readonly KDTreeNode<T> root;
         private Stack<KDTreeNode<T>> progress;

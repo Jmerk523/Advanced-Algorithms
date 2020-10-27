@@ -6,7 +6,7 @@ namespace Advanced.Algorithms.Sorting
     /// <summary>
     /// A merge sort implementation.
     /// </summary>
-    public class MergeSort<T> where T : IComparable
+    public class MergeSort<T> where T : IComparable<T>
     {
         /// <summary>
         /// Time complexity: O(nlog(n)).

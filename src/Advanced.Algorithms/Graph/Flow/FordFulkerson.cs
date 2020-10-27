@@ -9,7 +9,7 @@ namespace Advanced.Algorithms.Graph
     /// A ford-fulkerson max flox implementation on weighted directed graph using 
     /// adjacency list representation of graph and residual graph.
     /// </summary>
-    public class FordFulkersonMaxFlow<T, W> where W : IComparable
+    public class FordFulkersonMaxFlow<T, W> where W : IComparable<W>
     {
         readonly IFlowOperators<W> @operator;
         public FordFulkersonMaxFlow(IFlowOperators<W> @operator)
@@ -233,7 +233,7 @@ namespace Advanced.Algorithms.Graph
     /// <summary>
     /// Operators to deal with generic Add, Substract etc on edge weights for flow algorithms such as ford-fulkerson algorithm.
     /// </summary>
-    public interface IFlowOperators<W> where W : IComparable
+    public interface IFlowOperators<W> where W : IComparable<W>
     {
         /// <summary>
         /// default value for this type W.

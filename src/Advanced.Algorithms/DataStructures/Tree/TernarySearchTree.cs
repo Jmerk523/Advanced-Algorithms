@@ -8,7 +8,7 @@ namespace Advanced.Algorithms.DataStructures
     /// <summary>
     /// A ternary search tree implementation.
     /// </summary>
-    public class TernarySearchTree<T> : IEnumerable<T[]> where T : IComparable
+    public class TernarySearchTree<T> : IEnumerable<T[]> where T : IComparable<T>
     {
         private TernarySearchTreeNode<T> root;
 
@@ -340,7 +340,7 @@ namespace Advanced.Algorithms.DataStructures
         }
     }
 
-    internal class TernarySearchTreeNode<T> where T : IComparable
+    internal class TernarySearchTreeNode<T> where T : IComparable<T>
     {
         internal bool IsEnd { get; set; }
         internal T Value { get; set; }
@@ -359,7 +359,7 @@ namespace Advanced.Algorithms.DataStructures
         }
     }
 
-    internal class TernarySearchTreeEnumerator<T> : IEnumerator<T[]> where T : IComparable
+    internal class TernarySearchTreeEnumerator<T> : IEnumerator<T[]> where T : IComparable<T>
     {
         private readonly TernarySearchTreeNode<T> root;
         private Stack<TernarySearchTreeNode<T>> progress;

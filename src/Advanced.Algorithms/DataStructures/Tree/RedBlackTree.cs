@@ -11,10 +11,10 @@ namespace Advanced.Algorithms.DataStructures
     /// </summary>
     public class RedBlackTree<T> : IEnumerable<T> where T : IComparable<T>
     {
-        internal RedBlackTreeNode<T> Root { get; set; }
+        public RedBlackTreeNode<T> Root { get; set; }
 
         //if enabled, lookup will fasten deletion/insertion/exists operations. 
-        internal readonly Dictionary<T, BSTNodeBase<T>> NodeLookUp;
+        public readonly Dictionary<T, BSTNodeBase<T>> NodeLookUp;
 
         public int Count => Root == null ? 0 : Root.Count;
 
@@ -132,19 +132,19 @@ namespace Advanced.Algorithms.DataStructures
             return Root.KthSmallest(index).Value;
         }
 
-        internal RedBlackTreeNode<T> FindNode(T value)
+        public RedBlackTreeNode<T> FindNode(T value)
         {
             return Root == null ? null : Find(value).Item1;
         }
 
-        internal bool Exists(T value)
+        public bool Exists(T value)
         {
             return FindNode(value) != null;
         }
 
         //find the node with the given identifier among descendants of parent and parent
         //uses pre-order traversal
-        internal (RedBlackTreeNode<T>, int) Find(T value)
+        public (RedBlackTreeNode<T>, int) Find(T value)
         {
             if (NodeLookUp != null)
             {
@@ -174,7 +174,7 @@ namespace Advanced.Algorithms.DataStructures
         /// <summary>
         ///  Time complexity: O(log(n))
         /// </summary>
-        internal (RedBlackTreeNode<T>, int) InsertAndReturnNode(T value)
+        public (RedBlackTreeNode<T>, int) InsertAndReturnNode(T value)
         {
             //empty tree
             if (Root == null)
@@ -881,7 +881,7 @@ namespace Advanced.Algorithms.DataStructures
         }
     }
 
-    internal enum RedBlackTreeNodeColor
+    public enum RedBlackTreeNodeColor
     {
         Black,
         Red
@@ -892,30 +892,30 @@ namespace Advanced.Algorithms.DataStructures
     /// </summary>
     public class RedBlackTreeNode<T> : BSTNodeBase<T> where T : IComparable<T>
     {
-        internal new RedBlackTreeNode<T> Parent
+        public new RedBlackTreeNode<T> Parent
         {
             get { return (RedBlackTreeNode<T>)base.Parent; }
             set { base.Parent = value; }
         }
 
-        internal new RedBlackTreeNode<T> Left
+        public new RedBlackTreeNode<T> Left
         {
             get { return (RedBlackTreeNode<T>)base.Left; }
             set { base.Left = value; }
         }
 
-        internal new RedBlackTreeNode<T> Right
+        public new RedBlackTreeNode<T> Right
         {
             get { return (RedBlackTreeNode<T>)base.Right; }
             set { base.Right = value; }
         }
 
-        internal RedBlackTreeNodeColor NodeColor { get; set; }
+        public RedBlackTreeNodeColor NodeColor { get; set; }
 
-        internal RedBlackTreeNode<T> Sibling => Parent.Left == this ?
+        public RedBlackTreeNode<T> Sibling => Parent.Left == this ?
                                                 Parent.Right : Parent.Left;
 
-        internal RedBlackTreeNode(RedBlackTreeNode<T> parent, T value)
+        public RedBlackTreeNode(RedBlackTreeNode<T> parent, T value)
         {
             Parent = parent;
             Value = value;

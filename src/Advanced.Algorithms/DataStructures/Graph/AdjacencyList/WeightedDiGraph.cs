@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Advanced.Algorithms.Graph;
 
 namespace Advanced.Algorithms.DataStructures.Graph.AdjacencyList
 {
@@ -114,6 +115,42 @@ namespace Advanced.Algorithms.DataStructures.Graph.AdjacencyList
 
             Vertices[source].OutEdges.Add(Vertices[dest], weight);
             Vertices[dest].InEdges.Add(Vertices[source], weight);
+        }
+
+        /// <summary>
+        /// Add a new edge to this graph.
+        /// Time complexity: O(1).
+        /// </summary>
+        public void AddOrUpdateEdge(T source, T dest, TW weight, IFlowOperators<TW> flow)
+        {
+            if (source == null || dest == null)
+            {
+                throw new ArgumentException();
+            }
+
+            if (!Vertices.ContainsKey(source)
+                || !Vertices.ContainsKey(dest))
+            {
+                throw new Exception("Source or Destination Vertex is not in this graph.");
+            }
+
+            if (Vertices[source].OutEdges.TryGetValue(Vertices[dest], out var wOut))
+            {
+                Vertices[source].OutEdges[Vertices[dest]] = flow.AddWeights(wOut, weight);
+            }
+            else
+            {
+                Vertices[source].OutEdges.Add(Vertices[dest], weight);
+            }
+            
+            if (Vertices[dest].InEdges.TryGetValue(Vertices[source], out var wIn))
+            {
+                Vertices[dest].InEdges[Vertices[source]] = flow.AddWeights(wIn, weight);
+            }
+            else
+            {
+                Vertices[dest].InEdges.Add(Vertices[source], weight);
+            }
         }
 
         /// <summary>

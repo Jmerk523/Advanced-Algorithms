@@ -241,9 +241,9 @@ namespace Advanced.Algorithms.Graph
                 foreach (var edge in vertex.OutEdges)
                 {
                     //original edge
-                    newGraph.AddEdge(vertex.Key, edge.TargetVertex.Key, edge.Weight<W>());
+                    newGraph.AddOrUpdateEdge(vertex.Key, edge.TargetVertex.Key, edge.Weight<W>(), @operator);
                     //add a backward edge for residual graph with edge value as default(W)
-                    newGraph.AddEdge(edge.TargetVertex.Key, vertex.Key, default(W));
+                    newGraph.AddOrUpdateEdge(edge.TargetVertex.Key, vertex.Key, @operator.defaultWeight, @operator);
                 }
             }
 

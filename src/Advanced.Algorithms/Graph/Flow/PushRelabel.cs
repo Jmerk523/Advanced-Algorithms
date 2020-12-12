@@ -10,7 +10,7 @@ namespace Advanced.Algorithms.Graph
     /// <summary>
     /// A Push-Relabel algorithm implementation.
     /// </summary>
-    public class PushRelabelMaxFlow<T, W> where W : IComparable<W>
+    public class PushRelabelMaxFlow<T, W>
     {
         readonly IFlowOperators<W> @operator;
         public PushRelabelMaxFlow(IFlowOperators<W> @operator)
@@ -109,7 +109,7 @@ namespace Advanced.Algorithms.Graph
             {
                 //+ive out capacity  
                 if (min.CompareTo(vertexStatusMap[edge.Key.Key].Height) > 0
-                    && edge.Value.CompareTo(@operator.defaultWeight) > 0)
+                    && @operator.Comparer(edge.Value, @operator.defaultWeight) > 0)
                 {
                     min = vertexStatusMap[edge.Key.Key].Height;
 
@@ -134,11 +134,11 @@ namespace Advanced.Algorithms.Graph
             foreach (var edge in overflowVertex.OutEdges)
             {
                 //if out edge has +ive weight and neighbour height is less then flow is possible
-                if (edge.Value.CompareTo(@operator.defaultWeight) > 0
+                if (@operator.Comparer(edge.Value, @operator.defaultWeight) > 0
                     && vertexStatusMap[edge.Key.Key].Height
                        < vertexStatusMap[overflowVertex.Key].Height)
                 {
-                    var possibleWeightToPush = edge.Value.CompareTo(overflow) < 0 ? edge.Value : overflow;
+                    var possibleWeightToPush = @operator.Comparer(edge.Value, overflow) < 0 ? edge.Value : overflow;
 
                     //decrement overflow
                     vertexStatusMap[overflowVertex.Key].Overflow =
@@ -172,7 +172,7 @@ namespace Advanced.Algorithms.Graph
             {
                 //ignore source and sink (which can have non-zero overflow)
                 if (!vertexStatus.Key.Equals(source) && !vertexStatus.Key.Equals(sink) &&
-                    vertexStatus.Value.Overflow.CompareTo(@operator.defaultWeight) > 0)
+                    @operator.Comparer(vertexStatus.Value.Overflow, @operator.defaultWeight) > 0)
                 {
                     return vertexStatus.Key;
                 }

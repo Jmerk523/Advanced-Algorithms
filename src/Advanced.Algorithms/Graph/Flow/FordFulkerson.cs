@@ -233,8 +233,10 @@ namespace Advanced.Algorithms.Graph
     /// <summary>
     /// Operators to deal with generic Add, Substract etc on edge weights for flow algorithms such as ford-fulkerson algorithm.
     /// </summary>
-    public interface IFlowOperators<W> where W : IComparable<W>
+    public interface IFlowOperators<W>
     {
+        Comparison<W> Comparer { get; }
+
         /// <summary>
         /// default value for this type W.
         /// </summary>

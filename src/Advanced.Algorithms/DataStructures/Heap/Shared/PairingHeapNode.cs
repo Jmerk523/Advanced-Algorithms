@@ -2,7 +2,7 @@
 
 namespace Advanced.Algorithms.DataStructures
 {
-    internal class PairingHeapNode<T> : IComparable<PairingHeapNode<T>> where T : IComparable<T>
+    internal class PairingHeapNode<T>
     {
         internal T Value { get; set; }
 
@@ -16,11 +16,6 @@ namespace Advanced.Algorithms.DataStructures
 
         internal PairingHeapNode<T> Previous;
         internal PairingHeapNode<T> Next;
-
-        public int CompareTo(PairingHeapNode<T> other)
-        {
-            return Value.CompareTo(other.Value);
-        }
     }
 
 }

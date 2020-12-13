@@ -8,7 +8,7 @@ namespace Advanced.Algorithms.DataStructures
     /// <summary>
     /// A D-ary minMax heap implementation.
     /// </summary>
-    public class DaryHeap<T> : IEnumerable<T> where T : IComparable<T>
+    public class DaryHeap<T> : IEnumerable<T>
     {
         private readonly bool isMaxHeap;
         private readonly IComparer<T> comparer;

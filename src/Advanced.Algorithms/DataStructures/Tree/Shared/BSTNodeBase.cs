@@ -2,7 +2,7 @@
 
 namespace Advanced.Algorithms.DataStructures
 {
-    public abstract class BSTNodeBase<T> where T : IComparable<T>
+    public abstract class BSTNodeBase<T>
     {
         //Count of nodes under this node including this node.
         //Used to fasten kth smallest computation.

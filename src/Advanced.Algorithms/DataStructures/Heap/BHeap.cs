@@ -8,7 +8,7 @@ namespace Advanced.Algorithms.DataStructures
     /// <summary>
     /// A binary heap implementation.
     /// </summary>
-    public class BHeap<T> : IEnumerable<T> where T : IComparable<T>
+    public class BHeap<T> : IEnumerable<T>
     {
         private readonly bool isMaxHeap;
 

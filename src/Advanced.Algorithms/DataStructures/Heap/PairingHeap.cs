@@ -8,7 +8,7 @@ namespace Advanced.Algorithms.DataStructures
     /// <summary>
     /// A pairing minMax heap implementation.
     /// </summary>
-    public class PairingHeap<T> : IEnumerable<T> where T : IComparable<T>
+    public class PairingHeap<T> : IEnumerable<T>
     {
         private readonly bool isMaxHeap;
         private readonly IComparer<T> comparer;

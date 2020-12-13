@@ -9,8 +9,10 @@ namespace Advanced.Algorithms.DataStructures
     /// <summary>
     /// A red black tree implementation.
     /// </summary>
-    public class RedBlackTree<T> : IEnumerable<T> where T : IComparable<T>
+    public class RedBlackTree<T> : IEnumerable<T>
     {
+        private readonly IComparer<T> comparer;
+
         public RedBlackTreeNode<T> Root { get; set; }
 
         //if enabled, lookup will fasten deletion/insertion/exists operations. 
@@ -21,8 +23,9 @@ namespace Advanced.Algorithms.DataStructures
         /// <param name="enableNodeLookUp">Enabling lookup will fasten deletion/insertion/exists operations
         /// at the cost of additional space.</param>
         /// <param name="equalityComparer">Provide equality comparer for node lookup if enabled (required when T is not a value type).</param>
-        public RedBlackTree(bool enableNodeLookUp = false, IEqualityComparer<T> equalityComparer = null)
+        public RedBlackTree(bool enableNodeLookUp = false, IEqualityComparer<T> equalityComparer = null, IComparer<T> comparer = null)
         {
+            this.comparer = comparer ?? Comparer<T>.Default;
             if (enableNodeLookUp)
             {
                 if (!typeof(T).GetTypeInfo().IsValueType && equalityComparer == null)
@@ -43,9 +46,10 @@ namespace Advanced.Algorithms.DataStructures
         /// at the cost of additional space.</param>
         /// <param name="equalityComparer">Provide equality comparer for node lookup if enabled (required when T is not a value type).</param>
         public RedBlackTree(IEnumerable<T> sortedCollection, bool enableNodeLookUp = false,
-            IEqualityComparer<T> equalityComparer = null)
+            IEqualityComparer<T> equalityComparer = null, IComparer<T> comparer = null)
         {
-            BSTHelpers.ValidateSortedCollection(sortedCollection);
+            this.comparer = comparer ?? Comparer<T>.Default;
+            BSTHelpers.ValidateSortedCollection(sortedCollection, this.comparer);
             var nodes = sortedCollection.Select(x => new RedBlackTreeNode<T>(null, x)).ToArray();
             Root = (RedBlackTreeNode<T>)BSTHelpers.ToBST(nodes);
             assignColors(Root);
@@ -116,7 +120,7 @@ namespace Advanced.Algorithms.DataStructures
         /// </summary>
         public int IndexOf(T item)
         {
-            return Root.Position(item);
+            return Root.Position(item, comparer);
         }
 
         /// <summary>
@@ -151,13 +155,13 @@ namespace Advanced.Algorithms.DataStructures
                 if (NodeLookUp.ContainsKey(value))
                 {
                     var node = (NodeLookUp[value] as RedBlackTreeNode<T>);
-                    return (node, Root.Position(value));
+                    return (node, Root.Position(value, comparer));
                 }
 
                 return (null, -1);
             }
 
-            var result = Root.Find(value);
+            var result = Root.Find(value, comparer);
             return (result.Item1 as RedBlackTreeNode<T>, result.Item2);
         }
 
@@ -205,7 +209,7 @@ namespace Advanced.Algorithms.DataStructures
 
             while (true)
             {
-                var compareResult = currentNode.Value.CompareTo(newNodeValue);
+                var compareResult = comparer.Compare(currentNode.Value, newNodeValue);
 
                 //current node is less than new item
                 if (compareResult < 0)
@@ -890,7 +894,7 @@ namespace Advanced.Algorithms.DataStructures
     /// <summary>
     /// Red black tree node
     /// </summary>
-    public class RedBlackTreeNode<T> : BSTNodeBase<T> where T : IComparable<T>
+    public class RedBlackTreeNode<T> : BSTNodeBase<T>
     {
         public new RedBlackTreeNode<T> Parent
         {

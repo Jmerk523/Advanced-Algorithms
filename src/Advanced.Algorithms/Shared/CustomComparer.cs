@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Advanced.Algorithms
 {
-    internal class CustomComparer<T> : IComparer<T> where T : IComparable<T>
+    internal class CustomComparer<T> : IComparer<T>
     {
         private readonly bool isMax;
         private readonly IComparer<T> comparer;

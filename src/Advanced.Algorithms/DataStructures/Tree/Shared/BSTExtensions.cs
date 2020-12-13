@@ -1,13 +1,19 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Advanced.Algorithms.DataStructures
 {
     internal static class BSTExtensions
     {
+        internal static (BSTNodeBase<T>, int) Find<T>(this BSTNodeBase<T> current, T value) where T : IComparable<T>
+        {
+            return Find(current, value, Comparer<T>.Default);
+        }
+
         //find the node with the given identifier among descendants of parent and parent
         //uses pre-order traversal
         //O(log(n)) worst O(n) for unbalanced tree
-        internal static (BSTNodeBase<T>, int) Find<T>(this BSTNodeBase<T> current, T value) where T : IComparable<T>
+        internal static (BSTNodeBase<T>, int) Find<T>(this BSTNodeBase<T> current, T value, IComparer<T> comparer)
         {
             int position = 0;
 
@@ -18,7 +24,7 @@ namespace Advanced.Algorithms.DataStructures
                     return (null, -1);
                 }
 
-                var compareResult = current.Value.CompareTo(value);
+                var compareResult = comparer.Compare(current.Value, value);
 
                 if (compareResult == 0)
                 {
@@ -38,7 +44,7 @@ namespace Advanced.Algorithms.DataStructures
             }
         }
 
-        internal static BSTNodeBase<T> FindMax<T>(this BSTNodeBase<T> node) where T : IComparable<T>
+        internal static BSTNodeBase<T> FindMax<T>(this BSTNodeBase<T> node)
         {
             if (node == null)
             {
@@ -52,7 +58,7 @@ namespace Advanced.Algorithms.DataStructures
             }
         }
 
-        internal static BSTNodeBase<T> FindMin<T>(this BSTNodeBase<T> node) where T : IComparable<T>
+        internal static BSTNodeBase<T> FindMin<T>(this BSTNodeBase<T> node)
         {
             if (node == null)
             {
@@ -66,7 +72,7 @@ namespace Advanced.Algorithms.DataStructures
             }
         }
 
-        internal static BSTNodeBase<T> NextLower<T>(this BSTNodeBase<T> node) where T : IComparable<T>
+        internal static BSTNodeBase<T> NextLower<T>(this BSTNodeBase<T> node)
         {
             //root or left child
             if (node.Parent == null || node.IsLeftChild)
@@ -114,7 +120,7 @@ namespace Advanced.Algorithms.DataStructures
 
         }
 
-        internal static BSTNodeBase<T> NextHigher<T>(this BSTNodeBase<T> node) where T : IComparable<T>
+        internal static BSTNodeBase<T> NextHigher<T>(this BSTNodeBase<T> node)
         {
             //root or left child
             if (node.Parent == null || node.IsLeftChild)
@@ -161,7 +167,7 @@ namespace Advanced.Algorithms.DataStructures
             }
         }
 
-        internal static void UpdateCounts<T>(this BSTNodeBase<T> node, bool spiralUp = false) where T : IComparable<T>
+        internal static void UpdateCounts<T>(this BSTNodeBase<T> node, bool spiralUp = false)
         {
             while (node != null)
             {
@@ -180,7 +186,7 @@ namespace Advanced.Algorithms.DataStructures
         }
 
         //get the kth smallest element under given node
-        internal static BSTNodeBase<T> KthSmallest<T>(this BSTNodeBase<T> node, int k) where T : IComparable<T>
+        internal static BSTNodeBase<T> KthSmallest<T>(this BSTNodeBase<T> node, int k)
         {
             var leftCount = node.Left != null ? node.Left.Count : 0;
 
@@ -197,8 +203,13 @@ namespace Advanced.Algorithms.DataStructures
             return KthSmallest(node.Right, k - leftCount - 1);
         }
 
-        //get the sorted order position of given item under given node
         internal static int Position<T>(this BSTNodeBase<T> node, T item) where T : IComparable<T>
+        {
+            return Position(node, item, Comparer<T>.Default);
+        }
+
+        //get the sorted order position of given item under given node
+        internal static int Position<T>(this BSTNodeBase<T> node, T item, IComparer<T> comparer)
         {
             if (node == null)
             {
@@ -207,17 +218,17 @@ namespace Advanced.Algorithms.DataStructures
 
             var leftCount = node.Left != null ? node.Left.Count : 0;
 
-            if (node.Value.CompareTo(item) == 0)
+            if (comparer.Compare(node.Value, item) == 0)
             {
                 return leftCount;
             }
 
-            if (item.CompareTo(node.Value) < 0)
+            if (comparer.Compare(item, node.Value) < 0)
             {
-                return Position(node.Left, item);
+                return Position(node.Left, item, comparer);
             }
 
-            var position = Position(node.Right, item);
+            var position = Position(node.Right, item, comparer);
 
             return position < 0 ? position : position + leftCount + 1;
         }

@@ -9,7 +9,7 @@ namespace Advanced.Algorithms.DataStructures.Graph.AdjacencyList
     /// A weighted graph implementation.
     /// IEnumerable enumerates all vertices.
     /// </summary>
-    public class WeightedGraph<T, TW> : IGraph<T>, IEnumerable<T> where TW : IComparable<TW>
+    public class WeightedGraph<T, TW> : IGraph<T>, IEnumerable<T>
     {
         private Dictionary<T, WeightedGraphVertex<T, TW>> vertices { get; set; }
 
@@ -210,7 +210,7 @@ namespace Advanced.Algorithms.DataStructures.Graph.AdjacencyList
         public IEnumerable<IGraphVertex<T>> VerticesAsEnumberable => vertices.Select(x => x.Value);
     }
 
-    internal class WeightedGraphVertex<T, TW> : IGraphVertex<T>, IEnumerable<T> where TW : IComparable<TW>
+    internal class WeightedGraphVertex<T, TW> : IGraphVertex<T>, IEnumerable<T>
     {
         public T Key { get; set; }
 

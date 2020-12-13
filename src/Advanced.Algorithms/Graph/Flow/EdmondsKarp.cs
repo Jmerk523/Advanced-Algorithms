@@ -10,7 +10,7 @@ namespace Advanced.Algorithms.Graph
     /// An Edmond Karp max flow implementation on weighted directed graph using 
     /// adjacency list representation of graph and residual graph.
     /// </summary>
-    public class EdmondKarpMaxFlow<T, W> where W : IComparable<W>
+    public class EdmondKarpMaxFlow<T, W>
     {
         readonly IFlowOperators<W> @operator;
         public EdmondKarpMaxFlow(IFlowOperators<W> @operator)
@@ -124,7 +124,7 @@ namespace Advanced.Algorithms.Graph
 
                 var edgeValue = vertex1.OutEdges[vertex2];
 
-                if (min.CompareTo(edgeValue) > 0)
+                if (@operator.Comparer(min, edgeValue) > 0)
                 {
                     min = edgeValue;
                 }
@@ -182,7 +182,7 @@ namespace Advanced.Algorithms.Graph
                 {
                     //visit only if edge have available flow
                     if (!visited.Contains(edge.Key)
-                        && edge.Value.CompareTo(@operator.defaultWeight) > 0)
+                        && @operator.Comparer(edge.Value, @operator.defaultWeight) > 0)
                     {
                         //keep track of this to trace out path once sink is found
                         parentLookUp[edge.Key] = currentVertex;

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Advanced.Algorithms.DataStructures
 {
-    internal class BinomialHeapNode<T> : IComparable<BinomialHeapNode<T>> where T : IComparable<T>
+    internal class BinomialHeapNode<T>
     {
         internal T Value { get; set; }
         internal int Degree => Children.Count;
@@ -16,11 +16,6 @@ namespace Advanced.Algorithms.DataStructures
             this.Value = value;
 
             Children = new List<BinomialHeapNode<T>>();
-        }
-
-        public int CompareTo(BinomialHeapNode<T> other)
-        {
-            return Value.CompareTo(other.Value);
         }
     }
 

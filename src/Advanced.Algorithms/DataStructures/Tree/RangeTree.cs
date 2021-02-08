@@ -8,16 +8,16 @@ namespace Advanced.Algorithms.DataStructures
     /// <summary>
     /// A multi-dimentional range tree implementation.
     /// </summary>
-    public class RangeTree<T> : IEnumerable<T[]> where T : IComparable<T>
+    public class RangeTree<T> : IEnumerable<T[]>
     {
         private readonly int dimensions;
 
-        private OneDimentionalRangeTree<T> tree = new OneDimentionalRangeTree<T>();
+        private OneDimentionalRangeTree<T> tree;
         private HashSet<T[]> items = new HashSet<T[]>(new ArrayComparer<T>());
 
         public int Count { get; private set; }
 
-        public RangeTree(int dimensions)
+        public RangeTree(int dimensions, IComparer<T> comparer = null)
         {
             if (dimensions <= 0)
             {
@@ -25,6 +25,7 @@ namespace Advanced.Algorithms.DataStructures
             }
 
             this.dimensions = dimensions;
+            tree = new OneDimentionalRangeTree<T>(comparer);
         }
 
         /// <summary>
@@ -186,16 +187,22 @@ namespace Advanced.Algorithms.DataStructures
     /// One dimensional range tree
     /// by nesting node with r-b tree for next dimension.
     /// </summary>
-    internal class OneDimentionalRangeTree<T> where T : IComparable<T>
+    internal class OneDimentionalRangeTree<T>
     {
-        internal RedBlackTree<RangeTreeNode<T>> tree
-            = new RedBlackTree<RangeTreeNode<T>>();
+        internal readonly IComparer<T> comparer;
+
+        internal RedBlackTree<RangeTreeNode<T>> tree = new RedBlackTree<RangeTreeNode<T>>();
 
         internal int Count => tree.Count;
 
+        internal OneDimentionalRangeTree(IComparer<T> comparer = null)
+        {
+            this.comparer = comparer ?? Comparer<T>.Default;
+        }
+
         internal RangeTreeNode<T> Find(T value)
         {
-            var result = tree.FindNode(new RangeTreeNode<T>(value));
+            var result = tree.FindNode(new RangeTreeNode<T>(value, comparer));
             if (result == null)
             {
                 throw new Exception("Item not found in this tree.");
@@ -206,7 +213,7 @@ namespace Advanced.Algorithms.DataStructures
 
         internal RangeTreeNode<T> Insert(T value)
         {
-            var newNode = new RangeTreeNode<T>(value);
+            var newNode = new RangeTreeNode<T>(value, comparer);
 
             var existing = tree.FindNode(newNode);
             if (existing != null)
@@ -221,11 +228,11 @@ namespace Advanced.Algorithms.DataStructures
 
         internal void Delete(T value)
         {
-            var existing = tree.FindNode(new RangeTreeNode<T>(value));
+            var existing = tree.FindNode(new RangeTreeNode<T>(value, comparer));
 
             if (existing.Value.Values.Count == 1)
             {
-                tree.Delete(new RangeTreeNode<T>(value));
+                tree.Delete(new RangeTreeNode<T>(value, comparer));
                 return;
             }
 
@@ -261,7 +268,7 @@ namespace Advanced.Algorithms.DataStructures
             //move left
             else
             {
-                if (start.CompareTo(currentNode.Value.Value) <= 0)
+                if (comparer.Compare(start, currentNode.Value.Value) <= 0)
                 {
                     if (currentNode.Left != null)
                     {
@@ -279,7 +286,7 @@ namespace Advanced.Algorithms.DataStructures
                 //if start is greater than current
                 //and end is greater than current
                 //move right
-                if (end.CompareTo(currentNode.Value.Value) < 0)
+                if (comparer.Compare(end, currentNode.Value.Value) < 0)
                 {
                     return result;
                 }
@@ -310,15 +317,15 @@ namespace Advanced.Algorithms.DataStructures
         private bool inRange(RedBlackTreeNode<RangeTreeNode<T>> currentNode, T start, T end)
         {
             //start is less than current and end is greater than current
-            return start.CompareTo(currentNode.Value.Value) <= 0
-                && end.CompareTo(currentNode.Value.Value) >= 0;
+            return comparer.Compare(start, currentNode.Value.Value) <= 0
+                && comparer.Compare(end, currentNode.Value.Value) >= 0;
         }
     }
 
     /// <summary>
     /// Range tree node.
     /// </summary>
-    internal class RangeTreeNode<T> : IComparable<RangeTreeNode<T>> where T : IComparable<T>
+    internal class RangeTreeNode<T> : IComparable<RangeTreeNode<T>>
     {
         internal T Value => Values[0];
 
@@ -326,15 +333,15 @@ namespace Advanced.Algorithms.DataStructures
 
         internal OneDimentionalRangeTree<T> tree { get; set; }
 
-        internal RangeTreeNode(T value)
+        internal RangeTreeNode(T value, IComparer<T> comparer)
         {
             Values = new List<T>(new T[] { value });
-            tree = new OneDimentionalRangeTree<T>();
+            tree = new OneDimentionalRangeTree<T>(comparer);
         }
 
         public int CompareTo(RangeTreeNode<T> other)
         {
-            return Value.CompareTo(other.Value);
+            return tree.comparer.Compare(Value, other.Value);
         }
     }
 }

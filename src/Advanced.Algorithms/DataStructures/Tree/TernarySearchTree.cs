@@ -8,8 +8,9 @@ namespace Advanced.Algorithms.DataStructures
     /// <summary>
     /// A ternary search tree implementation.
     /// </summary>
-    public class TernarySearchTree<T> : IEnumerable<T[]> where T : IComparable<T>
+    public class TernarySearchTree<T> : IEnumerable<T[]>
     {
+        private readonly IComparer<T> comparer;
         private TernarySearchTreeNode<T> root;
 
         public int Count { get; private set; }
@@ -42,7 +43,7 @@ namespace Advanced.Algorithms.DataStructures
                 currentNode = new TernarySearchTreeNode<T>(parent, entry[currentIndex]);
             }
 
-            var compareResult = currentNode.Value.CompareTo(entry[currentIndex]);
+            var compareResult = comparer.Compare(currentNode.Value, entry[currentIndex]);
 
             //current is greater? move left, move right otherwise
             //if current is equal then move center
@@ -105,7 +106,7 @@ namespace Advanced.Algorithms.DataStructures
                 throw new Exception("Item not found.");
             }
 
-            var compareResult = currentNode.Value.CompareTo(entry[currentIndex]);
+            var compareResult = comparer.Compare(currentNode.Value, entry[currentIndex]);
             TernarySearchTreeNode<T> child;
             //current is greater? move left, move right otherwise
             //if current is equal then move center
@@ -191,7 +192,7 @@ namespace Advanced.Algorithms.DataStructures
                     return new List<T[]>();
                 }
 
-                var compareResult = currentNode.Value.CompareTo(searchPrefix[currentIndex]);
+                var compareResult = comparer.Compare(currentNode.Value, searchPrefix[currentIndex]);
                 //current is greater? move left, move right otherwise
                 //if current is equal then move center
                 if (compareResult > 0)
@@ -306,7 +307,7 @@ namespace Advanced.Algorithms.DataStructures
                     return isPrefixSearch || currentNode.IsEnd;
                 }
 
-                var compareResult = currentNode.Value.CompareTo(searchEntry[currentIndex]);
+                var compareResult = comparer.Compare(currentNode.Value, searchEntry[currentIndex]);
                 //current is greater? move left, move right otherwise
                 //if current is equal then move center
                 if (compareResult > 0)
@@ -340,7 +341,7 @@ namespace Advanced.Algorithms.DataStructures
         }
     }
 
-    internal class TernarySearchTreeNode<T> where T : IComparable<T>
+    internal class TernarySearchTreeNode<T>
     {
         internal bool IsEnd { get; set; }
         internal T Value { get; set; }
@@ -359,7 +360,7 @@ namespace Advanced.Algorithms.DataStructures
         }
     }
 
-    internal class TernarySearchTreeEnumerator<T> : IEnumerator<T[]> where T : IComparable<T>
+    internal class TernarySearchTreeEnumerator<T> : IEnumerator<T[]>
     {
         private readonly TernarySearchTreeNode<T> root;
         private Stack<TernarySearchTreeNode<T>> progress;

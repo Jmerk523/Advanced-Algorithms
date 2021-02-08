@@ -8,22 +8,27 @@ namespace Advanced.Algorithms.DataStructures
     /// <summary>
     /// A treap tree implementation.
     /// </summary>
-    public class TreapTree<T> : IEnumerable<T> where T : IComparable<T>
+    public class TreapTree<T> : IEnumerable<T>
     {
-        private Random rndGenerator = new Random();
+        private readonly IComparer<T> comparer;
+        private readonly Random rndGenerator = new Random();
+
         internal TreapTreeNode<T> Root { get; set; }
         public int Count => Root == null ? 0 : Root.Count;
 
-        public TreapTree() { }
+        public TreapTree(IComparer<T> comparer = null)
+        {
+            this.comparer = comparer ?? Comparer<T>.Default;
+        }
 
         /// <summary>
         /// Initialize the BST with given sorted keys.
         /// Time complexity: O(n).
         /// </summary>
         /// <param name="sortedCollection">The initial sorted collection.</param>
-        public TreapTree(IEnumerable<T> sortedCollection) : this()
+        public TreapTree(IEnumerable<T> sortedCollection, IComparer<T> comparer = null) : this(comparer)
         {
-            BSTHelpers.ValidateSortedCollection(sortedCollection);
+            BSTHelpers.ValidateSortedCollection(sortedCollection, this.comparer);
             var nodes = sortedCollection.Select(x => new TreapTreeNode<T>(null, x, rndGenerator.Next())).ToArray();
             Root = (TreapTreeNode<T>)BSTHelpers.ToBST(nodes);
             BSTHelpers.AssignCount(Root);
@@ -81,7 +86,7 @@ namespace Advanced.Algorithms.DataStructures
         {
             while (true)
             {
-                var compareResult = currentNode.Value.CompareTo(newNodeValue);
+                var compareResult = comparer.Compare(currentNode.Value, newNodeValue);
 
                 //current node is less than new item
                 if (compareResult < 0)
@@ -120,7 +125,7 @@ namespace Advanced.Algorithms.DataStructures
         /// </summary>
         public int IndexOf(T item)
         {
-            return Root.Position(item);
+            return Root.Position(item, comparer);
         }
 
         /// <summary>
@@ -172,7 +177,7 @@ namespace Advanced.Algorithms.DataStructures
             {
                 if (node != null)
                 {
-                    var compareResult = node.Value.CompareTo(value);
+                    var compareResult = comparer.Compare(node.Value, value);
 
                     //node is less than the search value so move right to find the deletion node
                     if (compareResult < 0)
@@ -348,7 +353,7 @@ namespace Advanced.Algorithms.DataStructures
                     return null;
                 }
 
-                if (parent.Value.CompareTo(value) == 0)
+                if (comparer.Compare(parent.Value, value) == 0)
                 {
                     return parent;
                 }
@@ -485,7 +490,7 @@ namespace Advanced.Algorithms.DataStructures
         //uses pre-order traversal
         private BSTNodeBase<T> find(T value)
         {
-            return Root.Find<T>(value).Item1 as BSTNodeBase<T>;
+            return Root.Find<T>(value, comparer).Item1 as BSTNodeBase<T>;
         }
 
         /// <summary>
@@ -545,7 +550,7 @@ namespace Advanced.Algorithms.DataStructures
         }
     }
 
-    internal class TreapTreeNode<T> : BSTNodeBase<T> where T : IComparable<T>
+    internal class TreapTreeNode<T> : BSTNodeBase<T>
     {
         internal new TreapTreeNode<T> Parent
         {

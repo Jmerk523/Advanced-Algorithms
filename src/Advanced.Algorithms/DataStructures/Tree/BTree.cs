@@ -8,8 +8,10 @@ namespace Advanced.Algorithms.DataStructures
     /// <summary>
     /// A B-tree implementation.
     /// </summary>
-    public class BTree<T> : IEnumerable<T> where T : IComparable<T>
+    public class BTree<T> : IEnumerable<T>
     {
+        private readonly IComparer<T> comparer;
+
         private readonly int maxKeysPerNode;
         private readonly int minKeysPerNode;
 
@@ -76,7 +78,7 @@ namespace Advanced.Algorithms.DataStructures
                 for (var i = 0; i < node.KeyCount; i++)
                 {
 
-                    if (value.CompareTo(node.Keys[i]) == 0)
+                    if (comparer.Compare(value, node.Keys[i]) == 0)
                     {
                         return node;
                     }
@@ -87,14 +89,14 @@ namespace Advanced.Algorithms.DataStructures
                 //if not leaf then drill down to leaf
                 for (var i = 0; i < node.KeyCount; i++)
                 {
-                    if (value.CompareTo(node.Keys[i]) == 0)
+                    if (comparer.Compare(value, node.Keys[i]) == 0)
                     {
                         return node;
                     }
 
                     //current value is less than new value
                     //drill down to left child of current value
-                    if (value.CompareTo(node.Keys[i]) < 0)
+                    if (comparer.Compare(value, node.Keys[i]) < 0)
                     {
                         return find(node.Children[i], value);
                     }
@@ -147,7 +149,7 @@ namespace Advanced.Algorithms.DataStructures
             {
                 //current value is less than new value
                 //drill down to left child of current value
-                if (newValue.CompareTo(node.Keys[i]) < 0)
+                if (comparer.Compare(newValue, node.Keys[i]) < 0)
                 {
                     return findInsertionLeaf(node.Children[i], newValue);
                 }
@@ -221,7 +223,7 @@ namespace Advanced.Algorithms.DataStructures
 
                     //median can be the new value or node.keys[i] (next node key)
                     //whichever is smaller
-                    if (!newValueInserted && newValue.CompareTo(node.Keys[i]) < 0)
+                    if (!newValueInserted && comparer.Compare(newValue, node.Keys[i]) < 0)
                     {
                         //median is new value
                         newMedian = newValue;
@@ -261,7 +263,7 @@ namespace Advanced.Algorithms.DataStructures
                 //and insert in to currentNode (left and right nodes)
                 //if new Value was already inserted then just copy from node.Keys in sequence
                 //since node.Keys is already in sorted order it should be fine
-                if (newValueInserted || node.Keys[i].CompareTo(newValue) < 0)
+                if (newValueInserted || comparer.Compare(node.Keys[i], newValue) < 0)
                 {
                     currentNode.Keys[currentNodeIndex] = node.Keys[i];
                     currentNode.KeyCount++;
@@ -321,7 +323,7 @@ namespace Advanced.Algorithms.DataStructures
             //insert in sorted order
             for (var i = 0; i < node.KeyCount; i++)
             {
-                if (newValue.CompareTo(node.Keys[i]) >= 0)
+                if (comparer.Compare(newValue, node.Keys[i]) >= 0)
                 {
                     continue;
                 }
@@ -366,7 +368,7 @@ namespace Advanced.Algorithms.DataStructures
 
             for (var i = 0; i < node.KeyCount; i++)
             {
-                if (value.CompareTo(node.Keys[i]) != 0)
+                if (comparer.Compare(value, node.Keys[i]) != 0)
                 {
                     continue;
                 }
@@ -597,7 +599,7 @@ namespace Advanced.Algorithms.DataStructures
             {
                 for (var i = 0; i < node.KeyCount; i++)
                 {
-                    if (value.CompareTo(node.Keys[i]) == 0)
+                    if (comparer.Compare(value, node.Keys[i]) == 0)
                     {
                         return node;
                     }
@@ -608,14 +610,14 @@ namespace Advanced.Algorithms.DataStructures
                 //if not leaf then drill down to leaf
                 for (var i = 0; i < node.KeyCount; i++)
                 {
-                    if (value.CompareTo(node.Keys[i]) == 0)
+                    if (comparer.Compare(value, node.Keys[i]) == 0)
                     {
                         return node;
                     }
 
                     //current value is less than new value
                     //drill down to left child of current value
-                    if (value.CompareTo(node.Keys[i]) < 0)
+                    if (comparer.Compare(value, node.Keys[i]) < 0)
                     {
                         return findDeletionNode(node.Children[i], value);
                     }
@@ -758,7 +760,7 @@ namespace Advanced.Algorithms.DataStructures
     /// abstract node shared by both B and B+ tree nodes
     /// so that we can use this for common tests across B and B+ tree
     /// </summary>
-    internal abstract class BNode<T> where T : IComparable<T>
+    internal abstract class BNode<T>
     {
         /// <summary>
         /// Array Index of this node in parent's Children array
@@ -783,7 +785,7 @@ namespace Advanced.Algorithms.DataStructures
         }
     }
 
-    internal class BTreeNode<T> : BNode<T> where T : IComparable<T>
+    internal class BTreeNode<T> : BNode<T>
     {
 
         internal BTreeNode<T> Parent { get; set; }
@@ -817,7 +819,7 @@ namespace Advanced.Algorithms.DataStructures
         }
     }
 
-    internal class BTreeEnumerator<T> : IEnumerator<T> where T : IComparable<T>
+    internal class BTreeEnumerator<T> : IEnumerator<T>
     {
         private readonly BTreeNode<T> root;
         private Stack<BTreeNode<T>> progress;

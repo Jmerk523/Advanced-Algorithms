@@ -9,8 +9,10 @@ namespace Advanced.Algorithms.DataStructures
     /// <summary>
     /// A binary tree implementation using pointers.
     /// </summary>
-    public class BinaryTree<T> : IEnumerable<T> where T : IComparable<T>
+    public class BinaryTree<T> : IEnumerable<T>
     {
+        private readonly IComparer<T> comparer;
+
         private BinaryTreeNode<T> root { get; set; }
 
         public int Count { get; private set; }
@@ -45,7 +47,7 @@ namespace Advanced.Algorithms.DataStructures
         {
             if (root == null)
             {
-                root = new BinaryTreeNode<T>(null, child);
+                root = new BinaryTreeNode<T>(child, comparer);
                 Count++;
                 return;
             }
@@ -199,7 +201,7 @@ namespace Advanced.Algorithms.DataStructures
                     return null;
                 }
 
-                if (parent.Value.CompareTo(value) == 0)
+                if (comparer.Compare(parent.Value, value) == 0)
                 {
                     return parent;
                 }
@@ -227,8 +229,10 @@ namespace Advanced.Algorithms.DataStructures
 
     }
 
-    internal class BinaryTreeNode<T> : IComparable<BinaryTreeNode<T>> where T : IComparable<T>
+    internal class BinaryTreeNode<T> : IComparable<BinaryTreeNode<T>>
     {
+        private readonly IComparer<T> comparer;
+
         internal T Value { get; set; }
 
         internal BinaryTreeNode<T> Parent { get; set; }
@@ -238,19 +242,26 @@ namespace Advanced.Algorithms.DataStructures
 
         internal bool IsLeaf => Left == null && Right == null;
 
+        internal BinaryTreeNode(T value, IComparer<T> comparer)
+            : this(null, value)
+        {
+            this.comparer = comparer;
+        }
+
         internal BinaryTreeNode(BinaryTreeNode<T> parent, T value)
         {
             Parent = parent;
             Value = value;
+            comparer = parent?.comparer;
         }
 
         public int CompareTo(BinaryTreeNode<T> other)
         {
-            return Value.CompareTo(other.Value);
+            return comparer.Compare(Value, other.Value);
         }
     }
 
-    internal class BinaryTreeEnumerator<T> : IEnumerator<T> where T : IComparable<T>
+    internal class BinaryTreeEnumerator<T> : IEnumerator<T>
     {
         private readonly BinaryTreeNode<T> root;
         private Stack<BinaryTreeNode<T>> progress;

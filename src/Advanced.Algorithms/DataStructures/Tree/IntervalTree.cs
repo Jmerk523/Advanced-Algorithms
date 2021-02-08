@@ -9,7 +9,7 @@ namespace Advanced.Algorithms.DataStructures
     /// <summary>
     /// A multi-dimensional interval tree implementation.
     /// </summary>
-    public class IntervalTree<T> : IEnumerable<Tuple<T[], T[]>> where T : IComparable<T>
+    public class IntervalTree<T> : IEnumerable<Tuple<T[], T[]>>
     {
         private readonly int dimensions;
         private readonly OneDimentionalIntervalTree<T> tree;
@@ -18,7 +18,7 @@ namespace Advanced.Algorithms.DataStructures
         public int Count { get; private set; }
 
 
-        public IntervalTree(int dimension)
+        public IntervalTree(int dimension, IComparer<T> comparer = null)
         {
             if (dimension <= 0)
             {
@@ -26,7 +26,7 @@ namespace Advanced.Algorithms.DataStructures
             }
 
             this.dimensions = dimension;
-            tree = new OneDimentionalIntervalTree<T>(defaultValue);
+            tree = new OneDimentionalIntervalTree<T>(defaultValue, comparer);
         }
 
         /// <summary>
@@ -274,8 +274,10 @@ namespace Advanced.Algorithms.DataStructures
     /// <summary>
     /// An interval tree implementation in one dimension using augmentation tree method.
     /// </summary>
-    internal class OneDimentionalIntervalTree<T> where T : IComparable<T>
+    internal class OneDimentionalIntervalTree<T>
     {
+        private readonly IComparer<T> comparer;
+
         //use a height balanced binary search tree
         private readonly RedBlackTree<OneDimentionalInterval<T>> redBlackTree
             = new RedBlackTree<OneDimentionalInterval<T>>();
@@ -289,9 +291,10 @@ namespace Advanced.Algorithms.DataStructures
         /// </summary>
         private readonly Lazy<T> defaultValue;
 
-        internal OneDimentionalIntervalTree(Lazy<T> defaultValue)
+        internal OneDimentionalIntervalTree(Lazy<T> defaultValue, IComparer<T> comparer = null)
         {
             this.defaultValue = defaultValue;
+            this.comparer = comparer ?? Comparer<T>.Default;
         }
 
         /// <summary>
@@ -371,7 +374,7 @@ namespace Advanced.Algorithms.DataStructures
         /// </summary>
         private void sortInterval(OneDimentionalInterval<T> value)
         {
-            if (value.Start.CompareTo(value.End[0]) <= 0)
+            if (comparer.Compare(value.Start, value.End[0]) <= 0)
             {
                 return;
             }
@@ -400,7 +403,7 @@ namespace Advanced.Algorithms.DataStructures
 
                 //if left max is greater than search start
                 //then the search interval can occur in left sub tree
-                if (current.Left != null && current.Left.Value.MaxEnd.CompareTo(searchInterval.Start) >= 0)
+                if (current.Left != null && comparer.Compare(current.Left.Value.MaxEnd, searchInterval.Start) >= 0)
                 {
                     current = current.Left;
                     continue;
@@ -435,7 +438,7 @@ namespace Advanced.Algorithms.DataStructures
             //if left max is greater than search start
             //then the search interval can occur in left sub tree
             if (current.Left != null
-                && current.Left.Value.MaxEnd.CompareTo(searchInterval.Start) >= 0)
+                && comparer.Compare(current.Left.Value.MaxEnd, searchInterval.Start) >= 0)
             {
                 getOverlaps(current.Left, searchInterval, result);
             }
@@ -461,7 +464,7 @@ namespace Advanced.Algorithms.DataStructures
                 {
 
                     //a.Start less than b.End and a.End greater than b.Start
-                    if (a.Start.CompareTo(b.End[j]) > 0 || a.End[i].CompareTo(b.Start) < 0)
+                    if (comparer.Compare(a.Start, b.End[j]) > 0 || comparer.Compare(a.End[i], b.Start) < 0)
                     {
                         continue;
                     }
@@ -493,12 +496,12 @@ namespace Advanced.Algorithms.DataStructures
                 {
                     //if current Max is less than current End
                     //then update current Max
-                    if (currentMax.CompareTo(node.Left.Value.MaxEnd) < 0)
+                    if (comparer.Compare(currentMax, node.Left.Value.MaxEnd) < 0)
                     {
                         currentMax = node.Left.Value.MaxEnd;
                     }
 
-                    if (currentMax.CompareTo(node.Right.Value.MaxEnd) < 0)
+                    if (comparer.Compare(currentMax, node.Right.Value.MaxEnd) < 0)
                     {
                         currentMax = node.Right.Value.MaxEnd;
                     }
@@ -507,14 +510,14 @@ namespace Advanced.Algorithms.DataStructures
                 {
                     //if current Max is less than current End
                     //then update current Max
-                    if (currentMax.CompareTo(node.Left.Value.MaxEnd) < 0)
+                    if (comparer.Compare(currentMax, node.Left.Value.MaxEnd) < 0)
                     {
                         currentMax = node.Left.Value.MaxEnd;
                     }
                 }
                 else if (node.Right != null)
                 {
-                    if (currentMax.CompareTo(node.Right.Value.MaxEnd) < 0)
+                    if (comparer.Compare(currentMax, node.Right.Value.MaxEnd) < 0)
                     {
                         currentMax = node.Right.Value.MaxEnd;
                     }
@@ -522,7 +525,7 @@ namespace Advanced.Algorithms.DataStructures
 
                 foreach (var v in node.Value.End)
                 {
-                    if (currentMax.CompareTo(v) < 0)
+                    if (comparer.Compare(currentMax, v) < 0)
                     {
                         currentMax = v;
                     }
@@ -573,8 +576,10 @@ namespace Advanced.Algorithms.DataStructures
     /// <summary>
     /// One dimensional interval.
     /// </summary>
-    internal class OneDimentionalInterval<T> : IComparable<OneDimentionalInterval<T>> where T : IComparable<T>
+    internal class OneDimentionalInterval<T> : IComparable<OneDimentionalInterval<T>>
     {
+        private readonly IComparer<T> comparer;
+
         /// <summary>
         /// Start of this interval range.
         /// </summary>
@@ -608,21 +613,22 @@ namespace Advanced.Algorithms.DataStructures
 
         public int CompareTo(OneDimentionalInterval<T> other)
         {
-            return Start.CompareTo(other.Start);
+            return comparer.Compare(Start, other.Start);
         }
 
-        public OneDimentionalInterval(T start, T end, Lazy<T> defaultValue)
+        public OneDimentionalInterval(T start, T end, Lazy<T> defaultValue, IComparer<T> comparer = null)
         {
+            this.comparer = comparer ?? Comparer<T>.Default;
             Start = start;
             End = new List<T> { end };
-            NextDimensionIntervals = new OneDimentionalIntervalTree<T>(defaultValue);
+            NextDimensionIntervals = new OneDimentionalIntervalTree<T>(defaultValue, this.comparer);
         }
     }
 
     /// <summary>
     /// Compares two intervals.
     /// </summary>
-    internal class IntervalComparer<T> : IEqualityComparer<Tuple<T[], T[]>> where T : IComparable<T>
+    internal class IntervalComparer<T> : IEqualityComparer<Tuple<T[], T[]>>
     {
         public bool Equals(Tuple<T[], T[]> x, Tuple<T[], T[]> y)
         {

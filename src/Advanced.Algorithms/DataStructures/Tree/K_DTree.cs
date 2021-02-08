@@ -8,16 +8,19 @@ namespace Advanced.Algorithms.DataStructures
     /// <summary>
     /// A multiDimensional k-d tree implementation (Unbalanced).
     /// </summary>
-    public class KDTree<T> : IEnumerable<T[]> where T : IComparable<T>
+    public class KDTree<T> : IEnumerable<T[]>
     {
+        private readonly IComparer<T> comparer;
+
         private int dimensions;
         private KDTreeNode<T> root;
 
         public int Count { get; private set; }
 
-        public KDTree(int dimensions)
+        public KDTree(int dimensions, IComparer<T> comparer = null)
         {
             this.dimensions = dimensions;
+            this.comparer = comparer ?? Comparer<T>.Default;
             if (dimensions <= 0)
             {
                 throw new Exception("Dimension should be greater than 0.");
@@ -51,7 +54,7 @@ namespace Advanced.Algorithms.DataStructures
         {
             var currentDimension = depth % dimensions;
 
-            if (point[currentDimension].CompareTo(currentNode.Points[currentDimension]) < 0)
+            if (comparer.Compare(point[currentDimension], currentNode.Points[currentDimension]) < 0)
             {
                 if (currentNode.Left == null)
                 {
@@ -65,7 +68,7 @@ namespace Advanced.Algorithms.DataStructures
                     insert(currentNode.Left, point, depth + 1);
                 }
             }
-            else if (point[currentDimension].CompareTo(currentNode.Points[currentDimension]) >= 0)
+            else if (comparer.Compare(point[currentDimension], currentNode.Points[currentDimension]) >= 0)
             {
                 if (currentNode.Right == null)
                 {
@@ -116,11 +119,11 @@ namespace Advanced.Algorithms.DataStructures
                 return;
             }
 
-            if (point[currentDimension].CompareTo(currentNode.Points[currentDimension]) < 0)
+            if (comparer.Compare(point[currentDimension], currentNode.Points[currentDimension]) < 0)
             {
                 delete(currentNode.Left, point, depth + 1);
             }
-            else if (point[currentDimension].CompareTo(currentNode.Points[currentDimension]) >= 0)
+            else if (comparer.Compare(point[currentDimension], currentNode.Points[currentDimension]) >= 0)
             {
                 delete(currentNode.Right, point, depth + 1);
             }
@@ -232,14 +235,14 @@ namespace Advanced.Algorithms.DataStructures
         {
             var min = node;
 
-            if (leftMin != null && min.Points[searchdimension]
-                .CompareTo(leftMin.Points[searchdimension]) > 0)
+            if (leftMin != null && comparer.Compare(min.Points[searchdimension],
+                leftMin.Points[searchdimension]) > 0)
             {
                 min = leftMin;
             }
 
-            if (rightMin != null && min.Points[searchdimension]
-             .CompareTo(rightMin.Points[searchdimension]) > 0)
+            if (rightMin != null && comparer.Compare(min.Points[searchdimension],
+                rightMin.Points[searchdimension]) > 0)
             {
                 min = rightMin;
             }
@@ -254,7 +257,7 @@ namespace Advanced.Algorithms.DataStructures
         {
             for (int i = 0; i < a.Length; i++)
             {
-                if (a[i].CompareTo(b[i]) != 0)
+                if (comparer.Compare(a[i], b[i]) != 0)
                 {
                     return false;
                 }
@@ -288,8 +291,8 @@ namespace Advanced.Algorithms.DataStructures
             var currentDimension = depth % dimensions;
             KDTreeNode<T> currentBest = null;
 
-            var compareResult = searchPoint[currentDimension]
-                .CompareTo(currentNode.Points[currentDimension]);
+            var compareResult = comparer.Compare(searchPoint[currentDimension]
+                , currentNode.Points[currentDimension]);
 
             //move toward search point until leaf is reached
             if (compareResult < 0)
@@ -308,9 +311,9 @@ namespace Advanced.Algorithms.DataStructures
                 //or if right node sits on split plane
                 //then also move left
                 if (currentNode.Right != null &&
-                    (distanceCalculator.Compare(currentNode.Points[currentDimension], searchPoint[currentDimension], searchPoint, currentBest.Points) < 0
-                    || currentNode.Right.Points[currentDimension]
-                       .CompareTo(currentNode.Points[currentDimension]) == 0))
+                    (distanceCalculator.Compare(currentNode.Points[currentDimension], searchPoint[currentDimension], searchPoint, currentBest.Points, comparer) < 0
+                    || comparer.Compare(currentNode.Right.Points[currentDimension]
+                       , currentNode.Points[currentDimension]) == 0))
                 {
                     var rightBest = findNearestNeighbour(currentNode.Right,
                           searchPoint, depth + 1,
@@ -339,7 +342,7 @@ namespace Advanced.Algorithms.DataStructures
                 //or if search point lies on split plane
                 //then also move left
                 if (currentNode.Left != null
-                    && (distanceCalculator.Compare(currentNode.Points[currentDimension], searchPoint[currentDimension], searchPoint, currentBest.Points) < 0 || compareResult == 0))
+                    && (distanceCalculator.Compare(currentNode.Points[currentDimension], searchPoint[currentDimension], searchPoint, currentBest.Points, comparer) < 0 || compareResult == 0))
                 {
                     var leftBest = findNearestNeighbour(currentNode.Left,
                           searchPoint, depth + 1,
@@ -364,7 +367,7 @@ namespace Advanced.Algorithms.DataStructures
             KDTreeNode<T> currentBest, KDTreeNode<T> currentNode, T[] point)
         {
             if (distanceCalculator.Compare(currentBest.Points,
-                currentNode.Points, point) < 0)
+                currentNode.Points, point, comparer) < 0)
             {
                 return currentBest;
             }
@@ -411,7 +414,7 @@ namespace Advanced.Algorithms.DataStructures
             //move left
             else
             {
-                if (start[currentDimension].CompareTo(currentNode.Points[currentDimension]) < 0)
+                if (comparer.Compare(start[currentDimension], currentNode.Points[currentDimension]) < 0)
                 {
                     rangeSearch(result, currentNode.Left, start, end, depth + 1);
 
@@ -419,7 +422,7 @@ namespace Advanced.Algorithms.DataStructures
                 //if start is greater than current
                 //and end is greater than current
                 //move right
-                if (end[currentDimension].CompareTo(currentNode.Points[currentDimension]) > 0)
+                if (comparer.Compare(end[currentDimension], currentNode.Points[currentDimension]) > 0)
                 {
                     rangeSearch(result, currentNode.Right, start, end, depth + 1);
 
@@ -443,8 +446,8 @@ namespace Advanced.Algorithms.DataStructures
             for (int i = 0; i < node.Points.Length; i++)
             {
                 //if not (start is less than node && end is greater than node)
-                if (!(start[i].CompareTo(node.Points[i]) <= 0
-                    && end[i].CompareTo(node.Points[i]) >= 0))
+                if (!(comparer.Compare(start[i], node.Points[i]) <= 0
+                    && comparer.Compare(end[i], node.Points[i]) >= 0))
                 {
                     return false;
                 }
@@ -468,7 +471,7 @@ namespace Advanced.Algorithms.DataStructures
     /// <summary>
     /// k-d tree node.
     /// </summary>
-    internal class KDTreeNode<T> where T : IComparable<T>
+    internal class KDTreeNode<T>
     {
         internal T[] Points { get; set; }
 
@@ -490,24 +493,24 @@ namespace Advanced.Algorithms.DataStructures
     /// A concrete implementation of this interface is required
     /// when calling NearestNeigbour() for k-d tree.
     /// </summary>
-    public interface IDistanceCalculator<T> where T : IComparable<T>
+    public interface IDistanceCalculator<T>
     {
         /// <summary>
         /// Compare the distance between point A to point
         /// and point B to point.
         /// </summary>
         /// <returns>similar result as IComparable.</returns>
-        int Compare(T[] a, T[] b, T[] point);
+        int Compare(T[] a, T[] b, T[] point, IComparer<T> comparer);
 
         /// <summary>
         /// Compare distance between point A to B
         /// and the distance between point Start to End.
         /// </summary>
         /// <returns>similar result as IComparabl.e</returns>
-        int Compare(T a, T b, T[] start, T[] end);
+        int Compare(T a, T b, T[] start, T[] end, IComparer<T> comparer);
     }
 
-    internal class KDTreeEnumerator<T> : IEnumerator<T[]> where T : IComparable<T>
+    internal class KDTreeEnumerator<T> : IEnumerator<T[]>
     {
         private readonly KDTreeNode<T> root;
         private Stack<KDTreeNode<T>> progress;

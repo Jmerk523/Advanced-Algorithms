@@ -8,11 +8,18 @@ namespace Advanced.Algorithms.DataStructures
     /// <summary>
     /// A tree implementation.
     /// </summary>
-    public class Tree<T> : IEnumerable<T> where T : IComparable<T>
+    public class Tree<T> : IEnumerable<T>
     {
+        private readonly IComparer<T> comparer;
+
         private TreeNode<T> root { get; set; }
 
         public int Count { get; private set; }
+
+        public Tree(IComparer<T> comparer = null)
+        {
+            this.comparer = comparer ?? Comparer<T>.Default;
+        }
 
         /// <summary>
         /// Time complexity:  O(n)
@@ -42,7 +49,7 @@ namespace Advanced.Algorithms.DataStructures
         {
             if (root == null)
             {
-                root = new TreeNode<T>(null, child);
+                root = new TreeNode<T>(child, comparer);
                 Count++;
                 return;
             }
@@ -181,7 +188,7 @@ namespace Advanced.Algorithms.DataStructures
 
         private TreeNode<T> find(TreeNode<T> parent, T value)
         {
-            if (parent.Value.CompareTo(value) == 0)
+            if (comparer.Compare(parent.Value, value) == 0)
             {
                 return parent;
             }
@@ -212,7 +219,7 @@ namespace Advanced.Algorithms.DataStructures
 
     }
 
-    internal class TreeNode<T> : IComparable<TreeNode<T>> where T : IComparable<T>
+    internal class TreeNode<T> : IComparable<TreeNode<T>>
     {
         internal T Value { get; set; }
 
@@ -221,21 +228,30 @@ namespace Advanced.Algorithms.DataStructures
 
         internal bool IsLeaf => Children.Count() == 0;
 
+        internal IComparer<T> Comparer { get; }
+
+        internal TreeNode(T value, IComparer<T> comparer)
+            : this(null, value)
+        {
+            Comparer = comparer;
+        }
+
         internal TreeNode(TreeNode<T> parent, T value)
         {
             Parent = parent;
             Value = value;
+            Comparer = parent?.Comparer;
 
             Children = new SinglyLinkedList<TreeNode<T>>();
         }
 
         public int CompareTo(TreeNode<T> other)
         {
-            return Value.CompareTo(other.Value);
+            return Comparer.Compare(Value, other.Value);
         }
     }
 
-    internal class TreeEnumerator<T> : IEnumerator<T> where T : IComparable<T>
+    internal class TreeEnumerator<T> : IEnumerator<T>
     {
         private readonly TreeNode<T> root;
         private Stack<TreeNode<T>> progress;

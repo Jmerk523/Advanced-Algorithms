@@ -8,8 +8,9 @@ namespace Advanced.Algorithms.DataStructures
     /// <summary>
     /// An AVL tree implementation.
     /// </summary>
-    public class AVLTree<T> : IEnumerable<T> where T : IComparable<T>
+    public class AVLTree<T> : IEnumerable<T>
     {
+        private readonly IComparer<T> comparer;
         private readonly Dictionary<T, BSTNodeBase<T>> nodeLookUp;
 
         internal AVLTreeNode<T> Root { get; set; }
@@ -18,12 +19,13 @@ namespace Advanced.Algorithms.DataStructures
 
         /// <param name="enableNodeLookUp">Enabling lookup will fasten deletion/insertion/exists operations
         /// at the cost of additional space.</param>
-        public AVLTree(bool enableNodeLookUp = false)
+        public AVLTree(bool enableNodeLookUp = false, IComparer<T> comparer = null)
         {
             if (enableNodeLookUp)
             {
                 nodeLookUp = new Dictionary<T, BSTNodeBase<T>>();
             }
+            this.comparer = comparer ?? Comparer<T>.Default;
         }
 
         /// <summary>
@@ -33,9 +35,10 @@ namespace Advanced.Algorithms.DataStructures
         /// <param name="sortedCollection">The initial sorted collection.</param>
         /// <param name="enableNodeLookUp">Enabling lookup will fasten deletion/insertion/exists operations
         ///  at the cost of additional space.</param>
-        public AVLTree(IEnumerable<T> sortedCollection, bool enableNodeLookUp = false)
+        public AVLTree(IEnumerable<T> sortedCollection, bool enableNodeLookUp = false, IComparer<T> comparer = null)
         {
-            BSTHelpers.ValidateSortedCollection(sortedCollection);
+            this.comparer = comparer ?? Comparer<T>.Default;
+            BSTHelpers.ValidateSortedCollection(sortedCollection, this.comparer);
             var nodes = sortedCollection.Select(x => new AVLTreeNode<T>(null, x)).ToArray();
             Root = (AVLTreeNode<T>)BSTHelpers.ToBST(nodes);
             recomputeHeight(Root);
@@ -97,7 +100,7 @@ namespace Advanced.Algorithms.DataStructures
         /// </summary>
         private void insert(AVLTreeNode<T> node, T value)
         {
-            var compareResult = node.Value.CompareTo(value);
+            var compareResult = comparer.Compare(node.Value, value);
 
             //node is less than the value so move right for insertion
             if (compareResult < 0)
@@ -148,7 +151,7 @@ namespace Advanced.Algorithms.DataStructures
         /// </summary>
         public int IndexOf(T item)
         {
-            return Root.Position(item);
+            return Root.Position(item, comparer);
         }
 
         /// <summary>
@@ -217,7 +220,7 @@ namespace Advanced.Algorithms.DataStructures
         {
             var baseCase = false;
 
-            var compareResult = node.Value.CompareTo(value);
+            var compareResult = comparer.Compare(node.Value, value);
 
             //node is less than the search value so move right to find the deletion node
             if (compareResult < 0)
@@ -418,7 +421,7 @@ namespace Advanced.Algorithms.DataStructures
                 return nodeLookUp[value] as AVLTreeNode<T>;
             }
 
-            return Root.Find(value).Item1 as AVLTreeNode<T>;
+            return Root.Find(value, comparer).Item1 as AVLTreeNode<T>;
         }
 
         //find the node with the given identifier among descendants of parent and parent
@@ -430,7 +433,7 @@ namespace Advanced.Algorithms.DataStructures
                 return null;
             }
 
-            if (parent.Value.CompareTo(value) == 0)
+            if (comparer.Compare(parent.Value, value) == 0)
             {
                 return parent;
             }
@@ -705,7 +708,7 @@ namespace Advanced.Algorithms.DataStructures
         }
     }
 
-    internal class AVLTreeNode<T> : BSTNodeBase<T> where T : IComparable<T>
+    internal class AVLTreeNode<T> : BSTNodeBase<T>
     {
         internal new AVLTreeNode<T> Parent
         {

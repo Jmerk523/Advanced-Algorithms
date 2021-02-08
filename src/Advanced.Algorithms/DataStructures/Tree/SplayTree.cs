@@ -8,20 +8,26 @@ namespace Advanced.Algorithms.DataStructures
     /// <summary>
     /// A splay tree implementation.
     /// </summary>
-    public class SplayTree<T> : IEnumerable<T> where T : IComparable<T>
+    public class SplayTree<T> : IEnumerable<T>
     {
+        private readonly IComparer<T> comparer;
+
         internal SplayTreeNode<T> Root { get; set; }
         public int Count => Root == null ? 0 : Root.Count;
-        public SplayTree() { }
+
+        public SplayTree(IComparer<T> comparer = null)
+        {
+            this.comparer = comparer ?? Comparer<T>.Default;
+        }
 
         /// <summary>
         /// Initialize the BST with given sorted keys.
         /// Time complexity: O(n).
         /// </summary>
         /// <param name="sortedCollection">The sorted collection.</param>
-        public SplayTree(IEnumerable<T> sortedCollection) : this()
+        public SplayTree(IEnumerable<T> sortedCollection, IComparer<T> comparer = null) : this(comparer)
         {
-            BSTHelpers.ValidateSortedCollection(sortedCollection);
+            BSTHelpers.ValidateSortedCollection(sortedCollection, this.comparer);
             var nodes = sortedCollection.Select(x => new SplayTreeNode<T>(null, x)).ToArray();
             Root = (SplayTreeNode<T>)BSTHelpers.ToBST(nodes);
             BSTHelpers.AssignCount(Root);
@@ -78,7 +84,7 @@ namespace Advanced.Algorithms.DataStructures
         {
             while (true)
             {
-                var compareResult = currentNode.Value.CompareTo(newNodeValue);
+                var compareResult = comparer.Compare(currentNode.Value, newNodeValue);
 
                 //current node is less than new item
                 if (compareResult < 0)
@@ -117,7 +123,7 @@ namespace Advanced.Algorithms.DataStructures
         /// </summary>
         public int IndexOf(T item)
         {
-            return Root.Position(item);
+            return Root.Position(item, comparer);
         }
 
         /// <summary>
@@ -167,7 +173,7 @@ namespace Advanced.Algorithms.DataStructures
         {
             while (true)
             {
-                var compareResult = node.Value.CompareTo(value);
+                var compareResult = comparer.Compare(node.Value, value);
 
                 //node is less than the search value so move right to find the deletion node
                 if (compareResult < 0)
@@ -335,7 +341,7 @@ namespace Advanced.Algorithms.DataStructures
                     return null;
                 }
 
-                if (parent.Value.CompareTo(value) == 0)
+                if (comparer.Compare(parent.Value, value) == 0)
                 {
                     return parent;
                 }
@@ -490,7 +496,7 @@ namespace Advanced.Algorithms.DataStructures
         //uses pre-order traversal
         private BSTNodeBase<T> find(T value)
         {
-            return Root.Find<T>(value).Item1 as BSTNodeBase<T>;
+            return Root.Find<T>(value, comparer).Item1;
         }
 
         /// <summary>
@@ -550,7 +556,7 @@ namespace Advanced.Algorithms.DataStructures
         }
     }
 
-    internal class SplayTreeNode<T> : BSTNodeBase<T> where T : IComparable<T>
+    internal class SplayTreeNode<T> : BSTNodeBase<T>
     {
         internal new SplayTreeNode<T> Parent
         {

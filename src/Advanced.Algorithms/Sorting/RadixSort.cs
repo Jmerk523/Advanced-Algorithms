@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Advanced.Algorithms.Sorting
@@ -8,7 +9,7 @@ namespace Advanced.Algorithms.Sorting
     /// </summary>
     public class RadixSort
     {
-        public static int[] Sort(int[] array, SortDirection sortDirection = SortDirection.Ascending)
+        public static ReadOnlySpan<int> Sort(in Span<int> array, SortDirection sortDirection = SortDirection.Ascending)
         {
             int i;
             for (i = 0; i < array.Length; i++)
@@ -20,8 +21,7 @@ namespace Advanced.Algorithms.Sorting
             }
 
             var @base = 1;
-            var max = array.Max();
-
+            var max = array.AsReadOnly().Max();
 
             while (max / @base > 0)
             {

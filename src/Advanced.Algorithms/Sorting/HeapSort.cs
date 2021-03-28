@@ -28,7 +28,7 @@ namespace Advanced.Algorithms.Sorting
         /// <summary>
         /// Time complexity: O(nlog(n)).
         /// </summary>
-        public static T[] Sort(ICollection<T> collection, SortDirection sortDirection = SortDirection.Ascending)
+        public static ReadOnlySpan<T> Sort(ICollection<T> collection, SortDirection sortDirection = SortDirection.Ascending)
         {
             //heapify
             var heap = new BHeap<T>(sortDirection, collection);

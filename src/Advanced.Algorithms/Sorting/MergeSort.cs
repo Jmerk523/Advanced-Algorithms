@@ -11,13 +11,13 @@ namespace Advanced.Algorithms.Sorting
         /// <summary>
         /// Time complexity: O(nlog(n)).
         /// </summary>
-        public static T[] Sort(T[] array, SortDirection sortDirection = SortDirection.Ascending)
+        public static Indexable<T> Sort(Indexable<T> array, SortDirection sortDirection = SortDirection.Ascending)
         {
             PartitionMerge(array, 0, array.Length - 1, new CustomComparer<T>(sortDirection, Comparer<T>.Default));
             return array;
         }
 
-        internal static void PartitionMerge(T[] array, int leftIndex, int rightIndex,
+        internal static void PartitionMerge(Indexable<T> array, int leftIndex, int rightIndex,
             CustomComparer<T> comparer)
         {
             if (leftIndex < 0 || rightIndex < 0 || (rightIndex - leftIndex + 1) < 2)
@@ -36,7 +36,7 @@ namespace Advanced.Algorithms.Sorting
         /// <summary>
         /// Merge two sorted arrays.
         /// </summary>
-        private static void merge(T[] array, int leftStart, int middle, int rightEnd,
+        private static void merge(Indexable<T> array, int leftStart, int middle, int rightEnd,
             CustomComparer<T> comparer)
         {
             var newLength = rightEnd - leftStart + 1;

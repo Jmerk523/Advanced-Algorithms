@@ -11,7 +11,7 @@ namespace Advanced.Algorithms.Sorting
         /// <summary>
         /// Time complexity: O(n^2)
         /// </summary>
-        public static T[] Sort(T[] array, SortDirection sortDirection = SortDirection.Ascending)
+        public static Span<T> Sort(Span<T> array, SortDirection sortDirection = SortDirection.Ascending)
         {
             if (array.Length <= 1)
             {
@@ -25,7 +25,7 @@ namespace Advanced.Algorithms.Sorting
             return array;
         }
 
-        private static void sort(T[] array, int startIndex, int endIndex, CustomComparer<T> comparer)
+        private static void sort(Span<T> array, int startIndex, int endIndex, CustomComparer<T> comparer)
         {
             while (true)
             {

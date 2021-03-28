@@ -11,7 +11,7 @@ namespace Advanced.Algorithms.Sorting
         /// <summary>
         /// Time complexity: O(n^2).
         /// </summary>
-        public static T[] Sort(T[] array, SortDirection sortDirection = SortDirection.Ascending)
+        public static Span<T> Sort(Span<T> array, SortDirection sortDirection = SortDirection.Ascending)
         {
             var comparer = new CustomComparer<T>(sortDirection, Comparer<T>.Default);
 

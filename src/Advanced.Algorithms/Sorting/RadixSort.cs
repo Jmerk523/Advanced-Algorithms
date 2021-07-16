@@ -9,19 +9,34 @@ namespace Advanced.Algorithms.Sorting
     /// </summary>
     public class RadixSort
     {
-        public static ReadOnlySpan<int> Sort(in Span<int> array, SortDirection sortDirection = SortDirection.Ascending)
+        private static int Max(in Indexable<int> array)
+        {
+            int max = int.MinValue;
+            foreach (var element in array)
+            {
+                max = Math.Max(max, element);
+            }
+            return max;
+        }
+
+        public static Indexable<int> Sort(Indexable<int> array, SortDirection sortDirection = SortDirection.Ascending)
+        {
+            return Sort(array, Comparer<int>.Default, sortDirection);
+        }
+
+        public static Indexable<int> Sort(Indexable<int> array, IComparer<int> order, SortDirection sortDirection = SortDirection.Ascending)
         {
             int i;
             for (i = 0; i < array.Length; i++)
             {
                 if (array[i] < 0)
                 {
-                    throw new System.Exception("Negative numbers not supported.");
+                    throw new NotSupportedException("Negative numbers not supported.");
                 }
             }
 
             var @base = 1;
-            var max = array.AsReadOnly().Max();
+            var max = Max(array);
 
             while (max / @base > 0)
             {
@@ -41,16 +56,19 @@ namespace Advanced.Algorithms.Sorting
                 }
 
                 //now update array with what is in buckets
-                var orderedBuckets = sortDirection == SortDirection.Ascending ?
-                                        buckets : buckets.Reverse();
+                var orderedBuckets = MergeSort<(int, List<int>)>.Sort(buckets.Select((b, i) => (i, b)).ToArray(),
+                    new CustomComparer<(int, List<int>), int>(t => t.Item1, sortDirection, order));
 
                 i = 0;
-                foreach (var bucket in orderedBuckets.Where(x => x != null))
+                foreach (var bucket in orderedBuckets)
                 {
-                    foreach (var item in bucket)
+                    if (bucket.Item2 != null)
                     {
-                        array[i] = item;
-                        i++;
+                        foreach (var item in bucket.Item2)
+                        {
+                            array[i] = item;
+                            i++;
+                        }
                     }
                 }
 

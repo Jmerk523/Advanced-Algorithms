@@ -3,17 +3,29 @@ using System.Collections.Generic;
 
 namespace Advanced.Algorithms.Sorting
 {
-    /// <summary>
-    /// A bubble sort implementation.
-    /// </summary>
-    public class BubbleSort<T> where T : IComparable<T>
+    public class BubbleSort
     {
         /// <summary>
         /// Time complexity: O(n^2).
         /// </summary>
-        public static Span<T> Sort(Span<T> array, SortDirection sortDirection = SortDirection.Ascending)
+        public static Indexable<T> Sort<T>(Indexable<T> array, SortDirection sortDirection = SortDirection.Ascending)
+            where T : IComparable<T>
         {
-            var comparer = new CustomComparer<T>(sortDirection, Comparer<T>.Default);
+            return BubbleSort<T>.Sort(array, Comparer<T>.Default, sortDirection);
+        }
+    }
+
+    /// <summary>
+    /// A bubble sort implementation.
+    /// </summary>
+    public class BubbleSort<T>
+    {
+        /// <summary>
+        /// Time complexity: O(n^2).
+        /// </summary>
+        public static Indexable<T> Sort(Indexable<T> array, IComparer<T> order, SortDirection sortDirection = SortDirection.Ascending)
+        {
+            var comparer = new CustomComparer<T>(sortDirection, order);
             var swapped = true;
 
             while (swapped)

@@ -3,22 +3,33 @@ using System.Collections.Generic;
 
 namespace Advanced.Algorithms.Sorting
 {
-    /// <summary>
-    /// A merge sort implementation.
-    /// </summary>
-    public class MergeSort<T> where T : IComparable<T>
+    public class MergeSort
     {
         /// <summary>
         /// Time complexity: O(nlog(n)).
         /// </summary>
-        public static Indexable<T> Sort(Indexable<T> array, SortDirection sortDirection = SortDirection.Ascending)
+        public static Indexable<T> Sort<T>(Indexable<T> array, SortDirection sortDirection = SortDirection.Ascending)
+            where T : IComparable<T>
         {
-            PartitionMerge(array, 0, array.Length - 1, new CustomComparer<T>(sortDirection, Comparer<T>.Default));
+            return MergeSort<T>.Sort(array, Comparer<T>.Default, sortDirection);
+        }
+    }
+
+    /// <summary>
+    /// A merge sort implementation.
+    /// </summary>
+    public class MergeSort<T>
+    {
+        /// <summary>
+        /// Time complexity: O(nlog(n)).
+        /// </summary>
+        public static Indexable<T> Sort(Indexable<T> array, IComparer<T> order, SortDirection sortDirection = SortDirection.Ascending)
+        {
+            PartitionMerge(array, 0, array.Length - 1, new CustomComparer<T>(sortDirection, order));
             return array;
         }
 
-        internal static void PartitionMerge(Indexable<T> array, int leftIndex, int rightIndex,
-            CustomComparer<T> comparer)
+        internal static void PartitionMerge(Indexable<T> array, int leftIndex, int rightIndex, CustomComparer<T> comparer)
         {
             if (leftIndex < 0 || rightIndex < 0 || (rightIndex - leftIndex + 1) < 2)
             {
@@ -36,8 +47,7 @@ namespace Advanced.Algorithms.Sorting
         /// <summary>
         /// Merge two sorted arrays.
         /// </summary>
-        private static void merge(Indexable<T> array, int leftStart, int middle, int rightEnd,
-            CustomComparer<T> comparer)
+        private static void merge(Indexable<T> array, int leftStart, int middle, int rightEnd, CustomComparer<T> comparer)
         {
             var newLength = rightEnd - leftStart + 1;
 

@@ -26,7 +26,7 @@ namespace Advanced.Algorithms.Sorting
             {
                 if (item < 0)
                 {
-                    throw new System.Exception("Negative numbers not supported.");
+                    throw new NotSupportedException("Negative numbers not supported.");
                 }
 
                 countArray[item]++;

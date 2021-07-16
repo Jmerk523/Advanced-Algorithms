@@ -13,7 +13,15 @@ namespace Advanced.Algorithms.Sorting
         /// <summary>
         /// Sort given integers using bucket sort with merge sort as sub sort.
         /// </summary>
-        public static int[] Sort(ReadOnlyMemory<int> array, int bucketSize, SortDirection sortDirection = SortDirection.Ascending)
+        public static int[] Sort(Indexable<int> array, int bucketSize, SortDirection sortDirection = SortDirection.Ascending)
+        {
+            return Sort(array, bucketSize, Comparer<int>.Default, sortDirection);
+        }
+
+        /// <summary>
+        /// Sort given integers using bucket sort with merge sort as sub sort.
+        /// </summary>
+        public static int[] Sort(Indexable<int> array, int bucketSize, IComparer<int> order, SortDirection sortDirection = SortDirection.Ascending)
         {
             if (bucketSize < 0 || bucketSize > array.Length)
             {
@@ -30,14 +38,14 @@ namespace Advanced.Algorithms.Sorting
                     continue;
                 }
 
-                var bucketIndex = array.Span[i] / bucketSize;
+                var bucketIndex = array[i] / bucketSize;
 
                 if (!buckets.ContainsKey(bucketIndex))
                 {
                     buckets.Add(bucketIndex, new List<int>());
                 }
 
-                buckets[bucketIndex].Add(array.Span[i]);
+                buckets[bucketIndex].Add(array[i]);
             }
 
             i = 0;
@@ -45,14 +53,14 @@ namespace Advanced.Algorithms.Sorting
             foreach (var bucket in buckets.ToList())
             {
                 var list = new List<int>(bucket.Value);
-                MergeSort<int>.Sort(bucket.Value, sortDirection);
+                MergeSort<int>.Sort(bucket.Value, order, sortDirection);
                 buckets[bucket.Key] = list;
 
                 bucketKeys[i] = bucket.Key;
                 i++;
             }
 
-            bucketKeys = MergeSort<int>.Sort(bucketKeys, sortDirection);
+            bucketKeys = MergeSort<int>.Sort(bucketKeys, order, sortDirection);
 
             var result = new int[array.Length];
 

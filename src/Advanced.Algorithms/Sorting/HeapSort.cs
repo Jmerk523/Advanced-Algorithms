@@ -1,40 +1,37 @@
-﻿
-/* Unmerged change from project 'Advanced.Algorithms (netstandard1.0)'
-Before:
+﻿using Advanced.Algorithms.DataStructures;
 using System;
-After:
-using Advanced.Algorithms.DataStructures;
-using System;
-*/
-using Advanced.Algorithms.DataStructures;
-
-/* Unmerged change from project 'Advanced.Algorithms (netstandard1.0)'
-Before:
 using System.Linq;
-using Advanced.Algorithms.DataStructures;
-After:
-using System.Linq;
-*/
-using System;
 using System.Collections.Generic;
 
 namespace Advanced.Algorithms.Sorting
 {
-    /// <summary>
-    /// A heap sort implementation.
-    /// </summary>
-    public class HeapSort<T> where T : IComparable<T>
+    public class HeapSort
     {
         /// <summary>
         /// Time complexity: O(nlog(n)).
         /// </summary>
-        public static ReadOnlySpan<T> Sort(ICollection<T> collection, SortDirection sortDirection = SortDirection.Ascending)
+        public static T[] Sort<T>(IEnumerable<T> collection, SortDirection sortDirection = SortDirection.Ascending)
+            where T : IComparable<T>
+        {
+            return HeapSort<T>.Sort(collection, Comparer<T>.Default, sortDirection);
+        }
+    }
+
+    /// <summary>
+    /// A heap sort implementation.
+    /// </summary>
+    public class HeapSort<T>
+    {
+        /// <summary>
+        /// Time complexity: O(nlog(n)).
+        /// </summary>
+        public static T[] Sort(IEnumerable<T> collection, IComparer<T> order, SortDirection sortDirection = SortDirection.Ascending)
         {
             //heapify
-            var heap = new BHeap<T>(sortDirection, collection);
+            var heap = new BHeap<T>(sortDirection, collection, order);
 
             //now extract min until empty and return them as sorted array
-            var sortedArray = new T[collection.Count];
+            var sortedArray = collection.ToArray();
             var j = 0;
             while (heap.Count > 0)
             {

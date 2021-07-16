@@ -3,14 +3,23 @@ using System.Collections.Generic;
 
 namespace Advanced.Algorithms.Sorting
 {
+    public class ShellSort
+    {
+        public static Indexable<T> Sort<T>(Indexable<T> array, SortDirection sortDirection = SortDirection.Ascending)
+             where T : IComparable<T>
+        {
+            return ShellSort<T>.Sort(array, Comparer<T>.Default, sortDirection);
+        }
+    }
+
     /// <summary>
     /// A shell sort implementation.
     /// </summary>
-    public class ShellSort<T> where T : IComparable<T>
+    public class ShellSort<T>
     {
-        public static Span<T> Sort(Span<T> array, SortDirection sortDirection = SortDirection.Ascending)
+        public static Indexable<T> Sort(Indexable<T> array, IComparer<T> order, SortDirection sortDirection = SortDirection.Ascending)
         {
-            var comparer = new CustomComparer<T>(sortDirection, Comparer<T>.Default);
+            var comparer = new CustomComparer<T>(sortDirection, order);
 
             var k = array.Length / 2;
             var j = 0;
@@ -42,7 +51,7 @@ namespace Advanced.Algorithms.Sorting
             return array;
         }
 
-        private static void swap(Span<T> array, int i, int j)
+        private static void swap(Indexable<T> array, int i, int j)
         {
             var tmp = array[i];
             array[i] = array[j];

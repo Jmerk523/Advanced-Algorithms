@@ -34,7 +34,7 @@ namespace Advanced.Algorithms.Graph
             }
 
             //quick sort edges
-            var sortedEdges = MergeSort<MSTEdge<T, W>>.Sort(sortArray);
+            var sortedEdges = MergeSort.Sort<MSTEdge<T, W>>(sortArray);
 
             var result = new List<MSTEdge<T, W>>();
             var disJointSet = new DisJointSet<T>();
